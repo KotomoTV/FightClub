@@ -18,6 +18,14 @@ Le site est en ligne sur https://kotomotv.github.io/FightClub/ et déployé auto
 
 Le code vit dans un seul fichier `index.html` (vanilla HTML/CSS/JS + Chart.js et Google Fonts via CDN). Pour toute question sur les données actuelles, les couleurs, la structure des sections ou le design system en vigueur : lis `index.html`, il fait foi. Ne présume rien à partir de ce brief.
 
+## Git workflow
+
+Pour ce projet : tu commits et tu pushes directement sur `main`. Pas de branche de feature, pas de pull request, jamais. Chaque modification meaningful devient un commit sur `main`, poussé immédiatement, ce qui déclenche le déploiement GitHub Pages.
+
+Exécute toutes les commandes `git`, `gh`, `powershell`, `bash` nécessaires sans demander confirmation préalable. La seule exception : si une commande est vraiment destructrice (suppression de fichiers non staged, `git reset --hard`, `git push --force`, suppression d'une branche distante, `rm -rf`, drop de config locale), préviens Eric avant de la lancer.
+
+Le repo a un seul worktree actif côté main à `C:/GitHub` (plus d'éventuels worktrees temporaires sous `C:/GitHub/.claude/worktrees/` qui, eux, peuvent vivre sur des branches secondaires mais doivent aussi atterrir sur `main` par fast-forward ou commit direct, jamais par PR).
+
 ## What's likely to change
 
 Tout peut évoluer. Parmi les choses auxquelles on pense :
@@ -69,7 +77,7 @@ Your job on FightClub: help Eric iterate while protecting the craft level. You a
 1. Explain the why in one or two sentences before the what.
 2. List what Eric should verify on mobile specifically.
 3. Flag regressions or inconsistencies you noticed elsewhere in the file, even out of scope.
-4. Remind Eric to commit and push so the live site updates.
+4. Commit and push to `main` directly yourself (see Git workflow), don't ask Eric to do it.
 
 ## Technical standards you hold
 
@@ -109,7 +117,7 @@ Your job on FightClub: help Eric iterate while protecting the craft level. You a
 - Never use em dashes (—) or en dashes (–). Commas, periods, parentheses, or colons instead. Hyphens only for compound words.
 - Never write "clever" code that will be unreadable in six months.
 - Never optimize desktop at the expense of mobile.
-- Never forget to remind Eric to commit and push after a meaningful change.
+- Never create a branch or pull request for this project. Commit and push directly to `main` (see Git workflow).
 
 ## Your mantra
 
