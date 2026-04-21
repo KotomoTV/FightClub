@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Fight Card · Saturday Sparring</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-2: #121212;
+    --panel: #1a1a1a;
+    --panel-2: #222222;
+    --line: #2e2e2e;
+    --line-soft: #1f1f1f;
+
+    /* Higher-contrast text tokens */
+    --ink: #f5f2ea;
+    --ink-dim: #b3ada3;
+    --ink-mute: #7a766e;
+
+    /* Fighter colors, bright for dark bg */
+    --pier: #ef4a56;
+    --arno: #f0c25a;
+    --me:   #5bd4e4;
+    --axel: #39d968;
+    --gold: #f0c25a;
+    --blood: #ef4a56;
+
+    --nav-h: 56px;
+    --container-px: 20px;
+    --section-py: 48px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--nav-h) + 12px);
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    line-height: 1.55;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body { padding-bottom: env(safe-area-inset-bottom); }
+
+  a, button, .tap {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+  a { color: inherit; text-decoration: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    mix-blend-mode: overlay;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--container-px);
+    padding-left: max(var(--container-px), env(safe-area-inset-left));
+    padding-right: max(var(--container-px), env(safe-area-inset-right));
+  }
+
+  /* ============ STICKY NAV ============ */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    background: rgba(10, 10, 10, 0.94);
+    backdrop-filter: saturate(140%) blur(12px);
+    -webkit-backdrop-filter: saturate(140%) blur(12px);
+    border-bottom: 1px solid var(--line);
+    padding-top: env(safe-area-inset-top);
+  }
+  .topnav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    height: var(--nav-h);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--container-px);
+    padding-left: max(var(--container-px), env(safe-area-inset-left));
+    padding-right: max(var(--container-px), env(safe-area-inset-right));
+  }
+  .brand {
+    font-family: 'Anton', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--ink);
+  }
+  .brand .dot { color: var(--blood); }
+  .topnav-links {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .topnav-links::-webkit-scrollbar { display: none; }
+  .topnav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    padding: 10px 12px;
+    white-space: nowrap;
+    border-radius: 4px;
+    transition: color 0.2s, background 0.2s;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .topnav-links a:hover, .topnav-links a:active { color: var(--ink); background: var(--panel); }
+
+  /* ============ SHARED ============ */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(32px, 9vw, 64px);
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .section-title .thin { -webkit-text-stroke: 1.5px var(--ink); color: transparent; }
+
+  /* ============ HERO ============ */
+  .hero {
+    position: relative;
+    padding: var(--section-py) 0 calc(var(--section-py) * 0.7);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    text-align: center;
+  }
+  .hero-glow {
+    position: absolute;
+    top: -180px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(900px, 140vw);
+    height: 500px;
+    background: radial-gradient(ellipse, rgba(239, 74, 86, 0.22), transparent 70%);
+    filter: blur(50px);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: '';
+    height: 1px;
+    flex: 1;
+    max-width: 50px;
+    background: var(--gold);
+    opacity: 0.4;
+  }
+  .hero-title {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(64px, 22vw, 160px);
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  .hero-title .accent {
+    color: var(--blood);
+    font-style: italic;
+    display: inline-block;
+    transform: skew(-8deg);
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .hero-meta .sep { color: var(--blood); }
+
+  /* ============ STAT SHEET ============ */
+  .stat-table-section { padding: var(--section-py) 0 calc(var(--section-py) * 0.8); }
+
+  /* Desktop table */
+  .stat-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    display: none;
+  }
+  .stat-table thead th {
+    padding: 22px 14px;
+    text-align: center;
+    border-bottom: 2px solid var(--line);
+    background: var(--bg-2);
+    font-family: 'Anton', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  .stat-table thead th:first-child {
+    text-align: left;
+    padding-left: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--ink-dim);
+    font-weight: 500;
+  }
+  .stat-table thead th.pier { color: var(--pier); border-top: 3px solid var(--pier); }
+  .stat-table thead th.arno { color: var(--arno); border-top: 3px solid var(--arno); }
+  .stat-table thead th.me   { color: var(--me);   border-top: 3px solid var(--me); }
+  .stat-table thead th.axel {
+    color: var(--axel);
+    border-top: 3px solid var(--axel);
+    position: relative;
+  }
+  .stat-table thead th.axel::after {
+    content: 'PROSPECT';
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    color: var(--axel);
+    font-weight: 700;
+  }
+  .stat-table tbody tr { border-bottom: 1px solid var(--line-soft); }
+  .stat-table tbody tr:hover { background: var(--panel-2); }
+  .stat-table tbody tr.category-break { background: var(--bg-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .stat-table tbody tr.category-break td {
+    padding: 12px 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+  }
+  .stat-table td { padding: 18px 14px; text-align: center; vertical-align: middle; }
+  .stat-table td.crit-name {
+    text-align: left;
+    padding-left: 28px;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--ink);
+    width: 28%;
+  }
+  .stat-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .stat-cell .bar {
+    width: 50px;
+    height: 4px;
+    background: var(--bg-2);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+  .stat-cell .bar::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%;
+    width: var(--w);
+    background: var(--c);
+    animation: fill-bar 1.2s cubic-bezier(.2,.9,.2,1) forwards;
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+  @keyframes fill-bar { to { transform: scaleX(1); } }
+  .stat-cell .val { color: var(--c); min-width: 18px; text-align: left; }
+  .stat-cell.dim .val { color: var(--ink-mute); }
+  .stat-cell.dim .bar::after { opacity: 0.4; }
+  .stat-cell.top .val { position: relative; padding-right: 14px; }
+  .stat-cell.top .val::after {
+    content: '●';
+    position: absolute;
+    right: 0; top: 50%;
+    transform: translateY(-50%);
+    color: var(--c);
+    font-size: 8px;
+  }
+
+  /* Mobile stat cards */
+  .stat-cards { display: flex; flex-direction: column; gap: 20px; }
+  .stat-group-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 6px 0;
+    margin-top: 8px;
+  }
+  .stat-group-label:first-child { margin-top: 0; }
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 20px;
+    position: relative;
+  }
+  .stat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+    gap: 12px;
+  }
+  .stat-card-header .name {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .stat-card-header .leader {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    white-space: nowrap;
+  }
+  .stat-card-header .leader .lead-name {
+    color: var(--leader-c);
+    font-weight: 700;
+  }
+  .stat-row {
+    display: grid;
+    grid-template-columns: 56px 1fr 36px;
+    gap: 14px;
+    align-items: center;
+    padding: 8px 0;
+  }
+  .stat-row .fighter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .stat-row .row-bar {
+    position: relative;
+    height: 10px;
+    background: var(--bg-2);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .stat-row .row-bar::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%;
+    width: var(--w);
+    background: var(--c);
+    border-radius: 5px;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: fill-bar 1.2s cubic-bezier(.2,.9,.2,1) forwards;
+  }
+  .stat-row.top .row-bar { box-shadow: 0 0 0 1px var(--c); }
+  .stat-row.top .fighter { color: var(--c); }
+  .stat-row .row-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--c);
+    text-align: right;
+  }
+  .stat-row.dim .row-val { color: var(--ink-mute); }
+  .stat-row.dim .row-bar::after { opacity: 0.45; }
+
+  /* ============ RADAR ============ */
+  .radar-section {
+    padding: var(--section-py) 0;
+    background: var(--bg-2);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .radar-canvas-wrap {
+    max-width: 780px;
+    margin: 16px auto 0;
+    aspect-ratio: 1;
+    position: relative;
+    padding: 0;
+  }
+  .radar-legend-inline {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+  .legend-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--panel);
+    border-left: 3px solid var(--c);
+    min-height: 48px;
+  }
+  .legend-pill .dot { width: 12px; height: 12px; background: var(--c); }
+  .legend-pill .name {
+    font-family: 'Anton', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .legend-pill .score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--c);
+    font-weight: 700;
+  }
+
+  /* ============ IDENTITY ============ */
+  .identity-section { padding: var(--section-py) 0 calc(var(--section-py) * 0.6); }
+  .identities {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .identity {
+    position: relative;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 28px 22px 26px;
+    overflow: hidden;
+  }
+  .identity::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--c);
+  }
+  .identity-bignum {
+    position: absolute;
+    top: -18px;
+    right: -6px;
+    font-family: 'Anton', sans-serif;
+    font-size: 140px;
+    line-height: 1;
+    color: var(--c);
+    opacity: 0.07;
+    font-weight: 400;
+    pointer-events: none;
+  }
+  .identity-phase {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--phase-c, var(--ink-dim));
+    background: color-mix(in srgb, var(--phase-c, var(--ink-dim)) 14%, var(--bg));
+    border: 1px solid color-mix(in srgb, var(--phase-c, var(--ink-dim)) 30%, transparent);
+    padding: 5px 9px;
+    border-radius: 3px;
+    margin-bottom: 14px;
+  }
+  .identity-name {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(40px, 11vw, 56px);
+    line-height: 0.9;
+    text-transform: uppercase;
+    color: var(--c);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .identity-type {
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .identity-weapon {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .identity-weapon .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 10px;
+  }
+  .identity-weapon .weapon {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(28px, 7.5vw, 34px);
+    text-transform: uppercase;
+    color: var(--ink);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+  .identity-weapon .score-line {
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--c);
+    font-weight: 700;
+  }
+  .identity-style {
+    margin-top: 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-dim);
+  }
+  .identity-style strong { color: var(--ink); font-weight: 700; }
+
+  /* ============ AVERAGES STRIP ============ */
+  .averages-strip { padding: 14px 0 var(--section-py); }
+  .averages-strip h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 14px;
+  }
+  .avg-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .avg-cell { background: var(--bg-2); padding: 16px 18px; }
+  .avg-cell .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 10px;
+  }
+  .avg-cell .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    padding: 4px 0;
+  }
+  .avg-cell .row .name {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .avg-cell .row .num { font-weight: 700; color: var(--c); }
+  .avg-cell.total .label { color: var(--gold); }
+
+  /* ============ GAME PLANS ============ */
+  .gameplans-section { padding: var(--section-py) 0 calc(var(--section-py) * 1.2); }
+  .plan-fighter {
+    margin-bottom: 40px;
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+  }
+  .plan-fighter:first-of-type { border-top: none; padding-top: 0; }
+  .plan-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
+  .plan-header .whos {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(36px, 10vw, 52px);
+    text-transform: uppercase;
+    color: var(--c);
+    line-height: 1;
+    font-weight: 400;
+  }
+  .plan-header .whos-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .plan-matchups {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .plan-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 24px 22px;
+    position: relative;
+    border-left: 3px solid var(--opp-c);
+  }
+  .plan-vs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 10px;
+  }
+  .plan-vs .opp { color: var(--opp-c); font-weight: 700; }
+  .plan-headline {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(26px, 7vw, 30px);
+    text-transform: uppercase;
+    color: var(--ink);
+    line-height: 1.05;
+    margin-bottom: 14px;
+    letter-spacing: 0.01em;
+    font-weight: 400;
+  }
+  .plan-body {
+    color: var(--ink-dim);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+  .plan-tactics {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px dashed var(--line);
+    padding-top: 14px;
+  }
+  .plan-tactics li {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    padding: 9px 0 9px 22px;
+    position: relative;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    font-weight: 500;
+  }
+  .plan-tactics li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--opp-c);
+    font-size: 13px;
+    top: 8px;
+  }
+  .plan-tactics li .highlight { color: var(--opp-c); font-weight: 700; }
+
+  /* ============ FOOTER ============ */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 32px 0;
+    padding-bottom: calc(32px + env(safe-area-inset-bottom));
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+  }
+
+  /* ============ TABLET (>= 640px) ============ */
+  @media (min-width: 640px) {
+    :root {
+      --container-px: 32px;
+      --section-py: 64px;
+    }
+    .avg-grid { grid-template-columns: repeat(4, 1fr); }
+    .identities { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  }
+
+  /* ============ DESKTOP (>= 900px) ============ */
+  @media (min-width: 900px) {
+    :root {
+      --container-px: 40px;
+      --section-py: 80px;
+    }
+    .topnav-links a { font-size: 11px; padding: 10px 14px; }
+    .brand { font-size: 20px; }
+
+    .stat-table { display: table; }
+    .stat-cards { display: none; }
+
+    .identities { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .identity { padding: 32px 24px; }
+    .identity-bignum { font-size: 180px; top: -26px; right: -8px; }
+
+    .plan-matchups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .plan-card { padding: 26px; }
+
+    .section-title { margin-bottom: 40px; }
+
+    .hero-title { font-size: clamp(80px, 10vw, 160px); }
+    .hero-meta { gap: 20px; }
+
+    .radar-canvas-wrap { margin-top: 30px; }
+    .radar-legend-inline { gap: 24px; margin-top: 30px; }
+    .plan-headline { font-size: 28px; }
+    .plan-header .whos { font-size: 52px; }
+  }
+
+  /* Stagger reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    animation: reveal 0.6s cubic-bezier(.2,.9,.2,1) forwards;
+  }
+  @keyframes reveal { to { opacity: 1; transform: none; } }
+  .d1 { animation-delay: 0.05s; }
+  .d2 { animation-delay: 0.15s; }
+  .d3 { animation-delay: 0.25s; }
+  .d4 { animation-delay: 0.35s; }
+  .d5 { animation-delay: 0.45s; }
+</style>
+</head>
+<body>
+
+<!-- ============ STICKY NAV ============ -->
+<nav class="topnav">
+  <div class="topnav-inner">
+    <div class="brand">FIGHT<span class="dot">·</span>CARD</div>
+    <div class="topnav-links">
+      <a href="#stats">Stats</a>
+      <a href="#radar">Radar</a>
+      <a href="#style">Style</a>
+      <a href="#plans">Plans</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-eyebrow reveal d1">Saturday · Bangkok</div>
+    <h1 class="hero-title reveal d2">
+      <span>FIGHT</span>
+      <span class="accent">CARD</span>
+    </h1>
+    <div class="hero-meta reveal d3">
+      <span>3 Vets</span>
+      <span class="sep">+</span>
+      <span>1 Prospect</span>
+      <span class="sep">✕</span>
+      <span>12 Game Plans</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STAT SHEET ============ -->
+<section class="stat-table-section" id="stats">
+  <div class="container">
+    <div class="section-label reveal d1">01 · Stat Sheet</div>
+    <h2 class="section-title reveal d2">Head to <span class="thin">Head</span></h2>
+
+    <!-- MOBILE CARDS -->
+    <div class="stat-cards reveal d2">
+      <div class="stat-group-label">Physical</div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="name">Cardio</div>
+          <div class="leader" style="--leader-c: var(--arno);">Lead · <span class="lead-name">Arno 8</span></div>
+        </div>
+        <div class="stat-row dim" style="--c: var(--pier); --w: 50%;"><span class="fighter">Pier</span><span class="row-bar"></span><span class="row-val">5</span></div>
+        <div class="stat-row top" style="--c: var(--arno); --w: 80%;"><span class="fighter">Arno</span><span class="row-bar"></span><span class="row-val">8</span></div>
+        <div class="stat-row dim" style="--c: var(--me);   --w: 30%;"><span class="fighter">Eric</span><span class="row-bar"></span><span class="row-val">3</span></div>
+        <div class="stat-row dim" style="--c: var(--axel); --w: 70%;"><span class="fighter">Axel</span><span class="row-bar"></span><span class="row-val">7</span></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="name">Strength</div>
+          <div class="leader" style="--leader-c: var(--pier);">Lead · <span class="lead-name">Pier 7</span></div>
+        </div>
+        <div class="stat-row top" style="--c: var(--pier); --w: 70%;"><span class="fighter">Pier</span><span class="row-bar"></span><span class="row-val">7</span></div>
+        <div class="stat-row dim" style="--c: var(--arno); --w: 60%;"><span class="fighter">Arno</span><span class="row-bar"></span><span class="row-val">6</span></div>
+        <div class="stat-row dim" style="--c: var(--me);   --w: 60%;"><span class="fighter">Eric</span><span class="row-bar"></span><span class="row-val">6</span></div>
+        <div class="stat-row dim" style="--c: var(--axel); --w: 40%;"><span class="fighter">Axel</span><span class="row-bar"></span><span class="row-val">4</span></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="name">Speed</div>
+          <div class="leader" style="--leader-c: var(--arno);">Lead · <span class="lead-name">Arno 6</span></div>
+        </div>
+        <div class="stat-row dim" style="--c: var(--pier); --w: 30%;"><span class="fighter">Pier</span><span class="row-bar"></span><span class="row-val">3</span></div>
+        <div class="stat-row top" style="--c: var(--arno); --w: 60%;"><span class="fighter">Arno</span><span class="row-bar"></span><span class="row-val">6</span></div>
+        <div class="stat-row dim" style="--c: var(--me);   --w: 40%;"><span class="fighter">Eric</span><span class="row-bar"></span><span class="row-val">4</span></div>
+        <div class="stat-row dim" style="--c: var(--axel); --w: 20%;"><span class="fighter">Axel</span><span class="row-bar"></span><span class="row-val">2</span></div>
+      </div>
+
+      <div class="stat-group-label">Technique</div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="name">Low Kick</div>
+          <div class="leader" style="--leader-c: var(--pier);">Lead · <span class="lead-name">Pier 7</span></div>
+        </div>
+        <div class="stat-row top" style="--c: var(--pier); --w: 70%;"><span class="fighter">Pier</span><span class="row-bar"></span><span class="row-val">7</span></div>
+        <div class="stat-row dim" style="--c: var(--arno); --w: 50%;"><span class="fighter">Arno</span><span class="row-bar"></span><span class="row-val">5</span></div>
+        <div class="stat-row dim" style="--c: var(--me);   --w: 50%;"><span class="fighter">Eric</span><span class="row-bar"></span><span class="row-val">5</span></div>
+        <div class="stat-row dim" style="--c: var(--axel); --w: 30%;"><span class="fighter">Axel</span><span class="row-bar"></span><span class="row-val">3</span></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="name">Middle Kick</div>
+          <div class="leader" style="--leader-c: var(--arno);">Lead · <span class="lead-name">Arno 7</span></div>
+        </div>
+        <div class="stat-row dim" style="--c: var(--pier); --w: 30%;"><span class="fighter">Pier</span><span class="row-bar"></span><span class="row-val">3</span></div>
+        <div class="stat-row top" style="--c: var(--arno); --w: 70%;"><span class="fighter">Arno</span><span class="row-bar"></span><span class="row-val">7</span></div>
+        <div class="stat-row dim" style="--c: var(--me);   --w: 30%;"><span class="fighter">Eric</span><span class="row-bar"></span><span class="row-val">3</span></div>
+        <div class="stat-row dim" style="--c: var(--axel); --w: 20%;"><span class="fighter">Axel</span><span class="row-bar"></span><span class="row-val">2</span></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="name">High Kick</div>
+          <div class="leader" style="--leader-c: var(--pier);">Lead · <span class="lead-name">Pier 5</span></div>
+        </div>
+        <div class="stat-row top" style="--c: var(--pier); --w: 50%;"><span class="fighter">Pier</span><span class="row-bar"></span><span class="row-val">5</span></div>
+        <div class="stat-row dim" style="--c: var(--arno); --w: 40%;"><span class="fighter">Arno</span><span class="row-bar"></span><span class="row-val">4</span></div>
+        <div class="stat-row dim" style="--c: var(--me);   --w: 20%;"><span class="fighter">Eric</span><span class="row-bar"></span><span class="row-val">2</span></div>
+        <div class="stat-row dim" style="--c: var(--axel); --w: 20%;"><span class="fighter">Axel</span><span class="row-bar"></span><span class="row-val">2</span></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="name">English Boxing</div>
+          <div class="leader" style="--leader-c: var(--me);">Lead · <span class="lead-name">Eric 7</span></div>
+        </div>
+        <div class="stat-row dim" style="--c: var(--pier); --w: 30%;"><span class="fighter">Pier</span><span class="row-bar"></span><span class="row-val">3</span></div>
+        <div class="stat-row dim" style="--c: var(--arno); --w: 50%;"><span class="fighter">Arno</span><span class="row-bar"></span><span class="row-val">5</span></div>
+        <div class="stat-row top" style="--c: var(--me);   --w: 70%;"><span class="fighter">Eric</span><span class="row-bar"></span><span class="row-val">7</span></div>
+        <div class="stat-row dim" style="--c: var(--axel); --w: 20%;"><span class="fighter">Axel</span><span class="row-bar"></span><span class="row-val">2</span></div>
+      </div>
+
+      <div class="stat-group-label">Fight IQ</div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="name">Feints &amp; Setup</div>
+          <div class="leader" style="--leader-c: var(--arno);">Lead · <span class="lead-name">Arno 6</span></div>
+        </div>
+        <div class="stat-row dim" style="--c: var(--pier); --w: 30%;"><span class="fighter">Pier</span><span class="row-bar"></span><span class="row-val">3</span></div>
+        <div class="stat-row top" style="--c: var(--arno); --w: 60%;"><span class="fighter">Arno</span><span class="row-bar"></span><span class="row-val">6</span></div>
+        <div class="stat-row dim" style="--c: var(--me);   --w: 20%;"><span class="fighter">Eric</span><span class="row-bar"></span><span class="row-val">2</span></div>
+        <div class="stat-row dim" style="--c: var(--axel); --w: 20%;"><span class="fighter">Axel</span><span class="row-bar"></span><span class="row-val">2</span></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="name">Pressure / Aggression</div>
+          <div class="leader" style="--leader-c: var(--me);">Lead · <span class="lead-name">Eric 6</span></div>
+        </div>
+        <div class="stat-row dim" style="--c: var(--pier); --w: 50%;"><span class="fighter">Pier</span><span class="row-bar"></span><span class="row-val">5</span></div>
+        <div class="stat-row dim" style="--c: var(--arno); --w: 50%;"><span class="fighter">Arno</span><span class="row-bar"></span><span class="row-val">5</span></div>
+        <div class="stat-row top" style="--c: var(--me);   --w: 60%;"><span class="fighter">Eric</span><span class="row-bar"></span><span class="row-val">6</span></div>
+        <div class="stat-row dim" style="--c: var(--axel); --w: 20%;"><span class="fighter">Axel</span><span class="row-bar"></span><span class="row-val">2</span></div>
+      </div>
+    </div>
+
+    <!-- DESKTOP TABLE -->
+    <table class="stat-table reveal d2">
+      <thead>
+        <tr>
+          <th>Criteria</th>
+          <th class="pier">Pier</th>
+          <th class="arno">Arno</th>
+          <th class="me">Eric</th>
+          <th class="axel">Axel</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="category-break"><td colspan="5">Physical</td></tr>
+        <tr>
+          <td class="crit-name">Cardio</td>
+          <td><span class="stat-cell dim" style="--c: var(--pier); --w: 50%;"><span class="bar"></span><span class="val">5</span></span></td>
+          <td><span class="stat-cell top" style="--c: var(--arno); --w: 80%;"><span class="bar"></span><span class="val">8</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--me);   --w: 30%;"><span class="bar"></span><span class="val">3</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--axel); --w: 70%;"><span class="bar"></span><span class="val">7</span></span></td>
+        </tr>
+        <tr>
+          <td class="crit-name">Strength</td>
+          <td><span class="stat-cell top" style="--c: var(--pier); --w: 70%;"><span class="bar"></span><span class="val">7</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--arno); --w: 60%;"><span class="bar"></span><span class="val">6</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--me);   --w: 60%;"><span class="bar"></span><span class="val">6</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--axel); --w: 40%;"><span class="bar"></span><span class="val">4</span></span></td>
+        </tr>
+        <tr>
+          <td class="crit-name">Speed</td>
+          <td><span class="stat-cell dim" style="--c: var(--pier); --w: 30%;"><span class="bar"></span><span class="val">3</span></span></td>
+          <td><span class="stat-cell top" style="--c: var(--arno); --w: 60%;"><span class="bar"></span><span class="val">6</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--me);   --w: 40%;"><span class="bar"></span><span class="val">4</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--axel); --w: 20%;"><span class="bar"></span><span class="val">2</span></span></td>
+        </tr>
+
+        <tr class="category-break"><td colspan="5">Technique</td></tr>
+        <tr>
+          <td class="crit-name">Low Kick</td>
+          <td><span class="stat-cell top" style="--c: var(--pier); --w: 70%;"><span class="bar"></span><span class="val">7</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--arno); --w: 50%;"><span class="bar"></span><span class="val">5</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--me);   --w: 50%;"><span class="bar"></span><span class="val">5</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--axel); --w: 30%;"><span class="bar"></span><span class="val">3</span></span></td>
+        </tr>
+        <tr>
+          <td class="crit-name">Middle Kick</td>
+          <td><span class="stat-cell dim" style="--c: var(--pier); --w: 30%;"><span class="bar"></span><span class="val">3</span></span></td>
+          <td><span class="stat-cell top" style="--c: var(--arno); --w: 70%;"><span class="bar"></span><span class="val">7</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--me);   --w: 30%;"><span class="bar"></span><span class="val">3</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--axel); --w: 20%;"><span class="bar"></span><span class="val">2</span></span></td>
+        </tr>
+        <tr>
+          <td class="crit-name">High Kick</td>
+          <td><span class="stat-cell top" style="--c: var(--pier); --w: 50%;"><span class="bar"></span><span class="val">5</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--arno); --w: 40%;"><span class="bar"></span><span class="val">4</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--me);   --w: 20%;"><span class="bar"></span><span class="val">2</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--axel); --w: 20%;"><span class="bar"></span><span class="val">2</span></span></td>
+        </tr>
+        <tr>
+          <td class="crit-name">English Boxing</td>
+          <td><span class="stat-cell dim" style="--c: var(--pier); --w: 30%;"><span class="bar"></span><span class="val">3</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--arno); --w: 50%;"><span class="bar"></span><span class="val">5</span></span></td>
+          <td><span class="stat-cell top" style="--c: var(--me);   --w: 70%;"><span class="bar"></span><span class="val">7</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--axel); --w: 20%;"><span class="bar"></span><span class="val">2</span></span></td>
+        </tr>
+
+        <tr class="category-break"><td colspan="5">Fight IQ</td></tr>
+        <tr>
+          <td class="crit-name">Feints &amp; Setup</td>
+          <td><span class="stat-cell dim" style="--c: var(--pier); --w: 30%;"><span class="bar"></span><span class="val">3</span></span></td>
+          <td><span class="stat-cell top" style="--c: var(--arno); --w: 60%;"><span class="bar"></span><span class="val">6</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--me);   --w: 20%;"><span class="bar"></span><span class="val">2</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--axel); --w: 20%;"><span class="bar"></span><span class="val">2</span></span></td>
+        </tr>
+        <tr>
+          <td class="crit-name">Pressure / Aggression</td>
+          <td><span class="stat-cell dim" style="--c: var(--pier); --w: 50%;"><span class="bar"></span><span class="val">5</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--arno); --w: 50%;"><span class="bar"></span><span class="val">5</span></span></td>
+          <td><span class="stat-cell top" style="--c: var(--me);   --w: 60%;"><span class="bar"></span><span class="val">6</span></span></td>
+          <td><span class="stat-cell dim" style="--c: var(--axel); --w: 20%;"><span class="bar"></span><span class="val">2</span></span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ RADAR ============ -->
+<section class="radar-section" id="radar">
+  <div class="container">
+    <div class="section-label reveal d1">02 · Profile Overlay</div>
+    <h2 class="section-title reveal d2">Shape of <span class="thin">the Fighter</span></h2>
+    <div class="radar-canvas-wrap reveal d3">
+      <canvas id="radarChart"></canvas>
+    </div>
+    <div class="radar-legend-inline reveal d3">
+      <div class="legend-pill" style="--c: var(--pier);"><div class="dot"></div><div class="name">Pier</div><div class="score">4.56</div></div>
+      <div class="legend-pill" style="--c: var(--arno);"><div class="dot"></div><div class="name">Arno</div><div class="score">5.78</div></div>
+      <div class="legend-pill" style="--c: var(--me);"><div class="dot"></div><div class="name">Eric</div><div class="score">4.22</div></div>
+      <div class="legend-pill" style="--c: var(--axel);"><div class="dot"></div><div class="name">Axel</div><div class="score">2.89</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ IDENTITY ============ -->
+<section class="identity-section" id="style">
+  <div class="container">
+    <div class="section-label reveal d1">03 · Fighter Identity</div>
+    <h2 class="section-title reveal d2">Weapon &amp; <span class="thin">Style</span></h2>
+
+    <div class="identities">
+      <article class="identity reveal d2" style="--c: var(--pier);">
+        <div class="identity-bignum">01</div>
+        <div class="identity-phase" style="--phase-c: var(--ink-dim);">↘ Past Prime · Veteran</div>
+        <div class="identity-name">Pier</div>
+        <div class="identity-type">Type · Power Kicker</div>
+        <div class="identity-weapon">
+          <div class="label">Signature Weapon</div>
+          <div class="weapon">Low Kick</div>
+          <div class="score-line">7/10 · backed by 7/10 strength</div>
+        </div>
+        <div class="identity-style">
+          Heavy, grounded, one-shot damage dealer. Years have taken his speed (3), but the leg kick and clinch strength still punish. Wants to <strong>chop you down</strong>, not outpoint you. Dangerous in short exchanges, fades in deep water.
+        </div>
+      </article>
+
+      <article class="identity reveal d3" style="--c: var(--arno);">
+        <div class="identity-bignum">02</div>
+        <div class="identity-phase" style="--phase-c: var(--arno);">● In His Prime · Peak</div>
+        <div class="identity-name">Arno</div>
+        <div class="identity-type">Type · Technical Endurance</div>
+        <div class="identity-weapon">
+          <div class="label">Signature Weapon</div>
+          <div class="weapon">Middle Kick</div>
+          <div class="score-line">7/10 · backed by 8/10 cardio</div>
+        </div>
+        <div class="identity-style">
+          The <strong>most complete</strong> fighter on the card, firing on every cylinder. Elite engine, best feints (6/10), surgical mid kicks. Thrives in deep water and wants rounds to stretch. The benchmark everyone else is measured against.
+        </div>
+      </article>
+
+      <article class="identity reveal d4" style="--c: var(--me);">
+        <div class="identity-bignum">03</div>
+        <div class="identity-phase" style="--phase-c: var(--me);">● In His Prime · Peak</div>
+        <div class="identity-name">Eric</div>
+        <div class="identity-type">Type · Pressure Boxer</div>
+        <div class="identity-weapon">
+          <div class="label">Signature Weapon</div>
+          <div class="weapon">English Boxing</div>
+          <div class="score-line">7/10 · backed by 6/10 pressure</div>
+        </div>
+        <div class="identity-style">
+          Closes distance and <strong>boxes in the pocket</strong>. Forward pressure is the engine. Limited cardio (3) means short, violent windows: end it fast or bleed gas. Refined hand game is the sharpest weapon outside of Arno.
+        </div>
+      </article>
+
+      <article class="identity reveal d5" style="--c: var(--axel);">
+        <div class="identity-bignum">04</div>
+        <div class="identity-phase" style="--phase-c: var(--axel);">↗ Rising Prospect · High Upside</div>
+        <div class="identity-name">Axel</div>
+        <div class="identity-type">Type · Raw Engine</div>
+        <div class="identity-weapon">
+          <div class="label">Signature Weapon</div>
+          <div class="weapon">Cardio</div>
+          <div class="score-line">7/10 · the only tool, but it's real</div>
+        </div>
+        <div class="identity-style">
+          The <strong>blank canvas</strong> of the session, with the highest ceiling in the room. Technique still at entry level (2s and 3s), but a legit engine (cardio 7 beats every vet except Arno) and <strong>no bad habits to unlearn</strong>. Development trajectory is what matters here, not today's scores. Handled right, he's the one catching the others in a year.
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AVERAGES STRIP ============ -->
+<section class="averages-strip">
+  <div class="container">
+    <h4>Secondary · Category Averages</h4>
+    <div class="avg-grid">
+      <div class="avg-cell">
+        <div class="label">Physical</div>
+        <div class="row"><span class="name">Pier</span><span class="num" style="--c: var(--pier);">5.00</span></div>
+        <div class="row"><span class="name">Arno</span><span class="num" style="--c: var(--arno);">6.67</span></div>
+        <div class="row"><span class="name">Eric</span><span class="num" style="--c: var(--me);">4.33</span></div>
+        <div class="row"><span class="name">Axel</span><span class="num" style="--c: var(--axel);">4.33</span></div>
+      </div>
+      <div class="avg-cell">
+        <div class="label">Technique</div>
+        <div class="row"><span class="name">Pier</span><span class="num" style="--c: var(--pier);">4.50</span></div>
+        <div class="row"><span class="name">Arno</span><span class="num" style="--c: var(--arno);">5.25</span></div>
+        <div class="row"><span class="name">Eric</span><span class="num" style="--c: var(--me);">4.25</span></div>
+        <div class="row"><span class="name">Axel</span><span class="num" style="--c: var(--axel);">2.25</span></div>
+      </div>
+      <div class="avg-cell">
+        <div class="label">Fight IQ</div>
+        <div class="row"><span class="name">Pier</span><span class="num" style="--c: var(--pier);">4.00</span></div>
+        <div class="row"><span class="name">Arno</span><span class="num" style="--c: var(--arno);">5.50</span></div>
+        <div class="row"><span class="name">Eric</span><span class="num" style="--c: var(--me);">4.00</span></div>
+        <div class="row"><span class="name">Axel</span><span class="num" style="--c: var(--axel);">2.00</span></div>
+      </div>
+      <div class="avg-cell total">
+        <div class="label">Overall</div>
+        <div class="row"><span class="name">Pier</span><span class="num" style="--c: var(--pier);">4.56</span></div>
+        <div class="row"><span class="name">Arno</span><span class="num" style="--c: var(--arno);">5.78</span></div>
+        <div class="row"><span class="name">Eric</span><span class="num" style="--c: var(--me);">4.22</span></div>
+        <div class="row"><span class="name">Axel</span><span class="num" style="--c: var(--axel);">2.89</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAME PLANS ============ -->
+<section class="gameplans-section" id="plans">
+  <div class="container">
+    <div class="section-label">04 · Sparring Game Plans</div>
+    <h2 class="section-title">The <span class="thin">Playbook</span></h2>
+
+    <!-- PIER -->
+    <div class="plan-fighter" style="--c: var(--pier);">
+      <div class="plan-header">
+        <div class="whos">Pier</div>
+        <div class="whos-sub">Power Kicker · Vs. The Others</div>
+      </div>
+      <div class="plan-matchups">
+        <div class="plan-card" style="--opp-c: var(--arno);">
+          <div class="plan-vs">Vs. <span class="opp">Arno</span></div>
+          <div class="plan-headline">End it early</div>
+          <div class="plan-body">Arno has the cardio (8) and feints (6) to outlast and outthink you. Every round you give him, he grows. Detonate the legs in round one and force a clinch war where your strength (7) takes over.</div>
+          <ul class="plan-tactics">
+            <li><span class="highlight">Heavy low kicks</span> in the first exchange</li>
+            <li>Clinch when he loads a middle kick</li>
+            <li>Don't chase feints, stay planted and counter</li>
+            <li>Cut off the ring, deny him <span class="highlight">space to circle</span></li>
+          </ul>
+        </div>
+        <div class="plan-card" style="--opp-c: var(--me);">
+          <div class="plan-vs">Vs. <span class="opp">Eric</span></div>
+          <div class="plan-headline">Stay at kicking range</div>
+          <div class="plan-body">Eric wants to close and box (7). Your boxing (3) is the weak link. Keep him at leg-kick range and punish his entries. His cardio (3) breaks before yours, so extend exchanges.</div>
+          <ul class="plan-tactics">
+            <li>Teep any forward pressure, reset range</li>
+            <li><span class="highlight">Low kick on his jab</span> to break rhythm</li>
+            <li>If he closes, clinch hard, don't box back</li>
+            <li>Force round two, his <span class="highlight">cardio breaks</span></li>
+          </ul>
+        </div>
+        <div class="plan-card" style="--opp-c: var(--axel);">
+          <div class="plan-vs">Vs. <span class="opp">Axel</span></div>
+          <div class="plan-headline">Teach, don't hunt</div>
+          <div class="plan-body">You outclass the prospect everywhere except cardio (5 vs 7). This is a working round, not a war. Drill your tools at controlled intensity. Don't blow out his knees with low kicks just because you can.</div>
+          <ul class="plan-tactics">
+            <li>Low kicks at <span class="highlight">50% power</span>, full technique</li>
+            <li>Let him feel the clinch, don't crush him</li>
+            <li>Reset often, give him clean reps</li>
+            <li>Respect the engine, he'll push your pace</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARNO -->
+    <div class="plan-fighter" style="--c: var(--arno);">
+      <div class="plan-header">
+        <div class="whos">Arno</div>
+        <div class="whos-sub">Technical Endurance · Vs. The Others</div>
+      </div>
+      <div class="plan-matchups">
+        <div class="plan-card" style="--opp-c: var(--pier);">
+          <div class="plan-vs">Vs. <span class="opp">Pier</span></div>
+          <div class="plan-headline">Move, check, outlast</div>
+          <div class="plan-body">Pier is slower (3) and one-dimensional. His only real threats are low kicks and clinch strength. Neutralize both by staying mobile, checking kicks, and refusing to clinch. Your cardio wins this in deep water.</div>
+          <ul class="plan-tactics">
+            <li><span class="highlight">Check every low kick</span> on the shin</li>
+            <li>Angle off, never stay square in front</li>
+            <li>Mid kicks to the body, attack his cardio</li>
+            <li>Refuse clinch, break or circle out</li>
+          </ul>
+        </div>
+        <div class="plan-card" style="--opp-c: var(--me);">
+          <div class="plan-vs">Vs. <span class="opp">Eric</span></div>
+          <div class="plan-headline">Keep him on kicks</div>
+          <div class="plan-body">Eric is dangerous in the pocket (boxing 7, pressure 6) but weak at range and gassed quickly (cardio 3). Don't let him close. Teep, mid kick, feint, pivot. Stretch the round and his engine dies.</div>
+          <ul class="plan-tactics">
+            <li>Teep to the hip on every step in</li>
+            <li><span class="highlight">Feint the jab</span>, land mid kick to liver</li>
+            <li>Never trade in the pocket, pivot out</li>
+            <li>Extend rounds, let his <span class="highlight">cardio collapse</span></li>
+          </ul>
+        </div>
+        <div class="plan-card" style="--opp-c: var(--axel);">
+          <div class="plan-vs">Vs. <span class="opp">Axel</span></div>
+          <div class="plan-headline">Become the teacher</div>
+          <div class="plan-body">You're the benchmark he's chasing. This is his most valuable round of the day. Slow everything down so he can read it. Show him the feint, then the kick. Reward good defense by giving him openings.</div>
+          <ul class="plan-tactics">
+            <li>Telegraph feints slowly, let him <span class="highlight">read them</span></li>
+            <li>Mid kicks at 40%, check his guard</li>
+            <li>Let him land when his technique is right</li>
+            <li>Talk after the round, not during</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERIC -->
+    <div class="plan-fighter" style="--c: var(--me);">
+      <div class="plan-header">
+        <div class="whos">Eric</div>
+        <div class="whos-sub">Pressure Boxer · Vs. The Others</div>
+      </div>
+      <div class="plan-matchups">
+        <div class="plan-card" style="--opp-c: var(--pier);">
+          <div class="plan-vs">Vs. <span class="opp">Pier</span></div>
+          <div class="plan-headline">Close and smother</div>
+          <div class="plan-body">Pier is slow (3) and his kicks need space. Rob him of both. Step inside on every kick attempt, box to the body, and tie up in the clinch. Your boxing (7) is a four-point gap over his (3).</div>
+          <ul class="plan-tactics">
+            <li>Step <span class="highlight">inside his low kick</span>, don't back up</li>
+            <li>Body-head combos in the pocket</li>
+            <li>Clinch and reset when he loads</li>
+            <li>Check or catch, never absorb the low kick</li>
+          </ul>
+        </div>
+        <div class="plan-card" style="--opp-c: var(--arno);">
+          <div class="plan-vs">Vs. <span class="opp">Arno</span></div>
+          <div class="plan-headline">Pressure, kill the feints</div>
+          <div class="plan-body">Toughest fight on the card. Arno outclasses you in cardio, speed, and feints. Your only path is to be the aggressor from second one. Press, cut the ring, make him fight backing up where his setups fall apart.</div>
+          <ul class="plan-tactics">
+            <li><span class="highlight">Walk him down</span>, never give a free step back</li>
+            <li>Close on his feints, don't react</li>
+            <li>Jab-cross-hook into clinch to drain his gas</li>
+            <li>Commit early, cardio <span class="highlight">won't hold round 3</span></li>
+          </ul>
+        </div>
+        <div class="plan-card" style="--opp-c: var(--axel);">
+          <div class="plan-vs">Vs. <span class="opp">Axel</span></div>
+          <div class="plan-headline">Controlled pocket work</div>
+          <div class="plan-body">Big mismatch on paper: boxing 7 vs 2, pressure 6 vs 2. This is rep work for you and defense school for him. Pressure enough for him to feel it, pull punches so he can learn to slip instead of panic.</div>
+          <ul class="plan-tactics">
+            <li>Forward pressure at <span class="highlight">70% intensity</span></li>
+            <li>Clean combinations, no head hunting</li>
+            <li>Let him tee off when you over-commit</li>
+            <li>Watch your cardio, he'll make you work</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- AXEL -->
+    <div class="plan-fighter" style="--c: var(--axel);">
+      <div class="plan-header">
+        <div class="whos">Axel</div>
+        <div class="whos-sub">The Prospect · Vs. The Vets</div>
+      </div>
+      <div class="plan-matchups">
+        <div class="plan-card" style="--opp-c: var(--pier);">
+          <div class="plan-vs">Vs. <span class="opp">Pier</span></div>
+          <div class="plan-headline">Survive the legs, stay long</div>
+          <div class="plan-body">Hardest physical test. His low kick (7) and strength (7) will punish any mistake. Use your cardio edge (7 vs 5): keep moving, refuse to clinch, make him chase. Every minute you survive is a minute of gold.</div>
+          <ul class="plan-tactics">
+            <li>Stay <span class="highlight">outside his kick range</span>, circle constantly</li>
+            <li>Check low kicks, don't block with the thigh</li>
+            <li>Never clinch, he'll manhandle you</li>
+            <li>Use your engine, <span class="highlight">keep the pace high</span></li>
+          </ul>
+        </div>
+        <div class="plan-card" style="--opp-c: var(--arno);">
+          <div class="plan-vs">Vs. <span class="opp">Arno</span></div>
+          <div class="plan-headline">The master class</div>
+          <div class="plan-body">Most valuable round of your week. You can't beat him, but you can absorb. Watch his feints, time his mid kicks, feel how he sets up shots. Your cardio (7) is close to his (8), so bank real rounds with him, not survival ones.</div>
+          <ul class="plan-tactics">
+            <li>Stay engaged, <span class="highlight">don't shell up</span></li>
+            <li>Read his hips before the kick lands</li>
+            <li>Try one feint of your own per exchange</li>
+            <li>Ask questions between rounds, not during</li>
+          </ul>
+        </div>
+        <div class="plan-card" style="--opp-c: var(--me);">
+          <div class="plan-vs">Vs. <span class="opp">Eric</span></div>
+          <div class="plan-headline">Distance management 101</div>
+          <div class="plan-body">Eric wants to close; you need space to survive. This is pure footwork practice. Every time he enters, you need an answer: teep, angle, or circle. His cardio (3) is your ally if you can last the opening minute.</div>
+          <ul class="plan-tactics">
+            <li>Teep on every forward step, even basic</li>
+            <li><span class="highlight">Angle, don't back straight</span></li>
+            <li>Don't trade in the pocket, you lose</li>
+            <li>Wait him out, his <span class="highlight">gas tank empties fast</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">Compiled for Saturday · Bangkok Session · Stay sharp</div>
+</footer>
+
+<script>
+(function() {
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
+
+  const labelsMobile = ['Cardio', 'Strength', 'Speed', 'Low Kick', 'Mid Kick', 'High Kick', 'Boxing', 'Feints', 'Pressure'];
+  const labelsDesktop = ['Cardio', 'Strength', 'Speed', 'Low Kick', 'Middle Kick', 'High Kick', 'English Boxing', 'Feints & Setup', 'Pressure'];
+  const labels = isMobile ? labelsMobile : labelsDesktop;
+
+  const pierData = [5, 7, 3, 7, 3, 5, 3, 3, 5];
+  const arnoData = [8, 6, 6, 5, 7, 4, 5, 6, 5];
+  const ericData = [3, 6, 4, 5, 3, 2, 7, 2, 6];
+  const axelData = [7, 4, 2, 3, 2, 2, 2, 2, 2];
+
+  const pointRadius = isMobile ? 3 : 5;
+  const pointHoverRadius = isMobile ? 5 : 7;
+  const labelFontSize = isMobile ? 12 : 15;
+  const tickFontSize = isMobile ? 10 : 11;
+  const borderWidth = isMobile ? 2 : 2.5;
+
+  function buildChart() {
+    Chart.defaults.font.family = "'Manrope', sans-serif";
+    Chart.defaults.font.weight = '500';
+
+    new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Pier', data: pierData,
+            backgroundColor: 'rgba(239, 74, 86, 0.18)',
+            borderColor: '#ef4a56', borderWidth: borderWidth,
+            pointBackgroundColor: '#ef4a56', pointRadius: pointRadius, pointHoverRadius: pointHoverRadius },
+          { label: 'Arno', data: arnoData,
+            backgroundColor: 'rgba(240, 194, 90, 0.18)',
+            borderColor: '#f0c25a', borderWidth: borderWidth,
+            pointBackgroundColor: '#f0c25a', pointRadius: pointRadius, pointHoverRadius: pointHoverRadius },
+          { label: 'Eric', data: ericData,
+            backgroundColor: 'rgba(91, 212, 228, 0.18)',
+            borderColor: '#5bd4e4', borderWidth: borderWidth,
+            pointBackgroundColor: '#5bd4e4', pointRadius: pointRadius, pointHoverRadius: pointHoverRadius },
+          { label: 'Axel', data: axelData,
+            backgroundColor: 'rgba(57, 217, 104, 0.18)',
+            borderColor: '#39d968', borderWidth: borderWidth,
+            pointBackgroundColor: '#39d968', pointRadius: pointRadius, pointHoverRadius: pointHoverRadius }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        layout: { padding: isMobile ? 6 : 10 },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0a0a0a',
+            borderColor: '#2e2e2e', borderWidth: 1,
+            titleColor: '#f0c25a',
+            titleFont: { family: 'Manrope', size: 12, weight: '700' },
+            bodyColor: '#f5f2ea',
+            bodyFont: { family: 'Manrope', size: 12, weight: '500' },
+            padding: 12, boxWidth: 10, boxHeight: 10
+          }
+        },
+        scales: {
+          r: {
+            beginAtZero: true, min: 0, max: 10,
+            ticks: {
+              stepSize: 2, color: '#b3ada3',
+              font: { family: 'Manrope', size: tickFontSize, weight: '600' },
+              backdropColor: 'transparent'
+            },
+            grid: { color: 'rgba(179, 173, 163, 0.22)' },
+            angleLines: { color: 'rgba(179, 173, 163, 0.3)' },
+            pointLabels: {
+              color: '#f5f2ea',
+              font: { family: 'Manrope', size: labelFontSize, weight: '700' },
+              padding: isMobile ? 8 : 12
+            }
+          }
+        },
+        elements: { line: { tension: 0.05 } }
+      }
+    });
+  }
+
+  if (document.fonts && document.fonts.load) {
+    Promise.all([
+      document.fonts.load('700 15px Manrope'),
+      document.fonts.load('600 11px Manrope')
+    ]).then(buildChart).catch(buildChart);
+  } else {
+    setTimeout(buildChart, 300);
+  }
+})();
+</script>
+
+</body>
+</html>
