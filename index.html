@@ -400,7 +400,8 @@
     opacity: 1;
     box-shadow: inset 0 0 0 2px var(--c);
   }
-  .legend-pill[aria-pressed="true"] {
+  .legend-pill[aria-pressed="true"],
+  .legend-pill[aria-selected="true"] {
     opacity: 1;
     background: color-mix(in srgb, var(--c) 14%, var(--bg));
     border-color: var(--c);
@@ -413,7 +414,8 @@
     line-height: 1;
     color: var(--ink);
   }
-  .legend-pill[aria-pressed="true"] .name { color: var(--c); }
+  .legend-pill[aria-pressed="true"] .name,
+  .legend-pill[aria-selected="true"] .name { color: var(--c); }
   .legend-pill .score {
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
@@ -422,21 +424,42 @@
     opacity: 0.8;
     line-height: 1;
   }
-  .legend-pill[aria-pressed="true"] .score { opacity: 1; }
+  .legend-pill[aria-pressed="true"] .score,
+  .legend-pill[aria-selected="true"] .score { opacity: 1; }
 
   /* ============ IDENTITY ============ */
   .identity-section { padding: var(--section-py) 0 calc(var(--section-py) * 0.6); }
+  .identity-nav {
+    display: flex;
+    gap: 6px;
+    max-width: 780px;
+    margin: 0 auto 20px;
+  }
   .identities {
     display: flex;
-    flex-direction: column;
     gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    padding-bottom: 14px;
+    margin-left: calc(var(--container-px) * -1);
+    margin-right: calc(var(--container-px) * -1);
+    padding-left: var(--container-px);
+    padding-right: var(--container-px);
+    scroll-padding-left: var(--container-px);
+    scroll-padding-right: var(--container-px);
   }
+  .identities::-webkit-scrollbar { display: none; }
   .identity {
     position: relative;
     background: var(--panel);
     border: 1px solid var(--line);
     padding: 28px 22px 26px;
     overflow: hidden;
+    flex: 0 0 calc(100% - 40px);
+    max-width: 340px;
+    scroll-snap-align: start;
   }
   .identity::before {
     content: '';
@@ -741,7 +764,7 @@
       --container-px: 32px;
       --section-py: 64px;
     }
-    .identities { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .identity { flex: 0 0 300px; max-width: none; }
 
     .stat-matrix { --bar-max: 64px; }
     .stat-matrix thead th { font-size: 22px; padding: 14px 4px 18px; }
@@ -773,8 +796,7 @@
     .stat-matrix .mini { height: 4px; }
     .stat-matrix .stat-cell.top .mini { height: 6px; }
 
-    .identities { grid-template-columns: repeat(5, 1fr); gap: 20px; }
-    .identity { padding: 32px 24px; }
+    .identity { flex: 0 0 340px; padding: 32px 24px; }
     .identity-bignum { font-size: 180px; top: -26px; right: -8px; }
 
     .plans-picker { padding: 22px 28px; gap: 18px; }
@@ -965,8 +987,16 @@
     <div class="section-label reveal d1">03 · Fighter Identity</div>
     <h2 class="section-title reveal d2">Weapon &amp; <span class="thin">Style</span></h2>
 
-    <div class="identities">
-      <article class="identity reveal d2" style="--c: var(--pier);">
+    <div class="identity-nav reveal d3" role="tablist" aria-label="Browse fighter profiles">
+      <button type="button" class="legend-pill" data-fighter="pier" role="tab" aria-selected="true"  style="--c: var(--pier);"><span class="name">Pier</span><span class="score">4.56</span></button>
+      <button type="button" class="legend-pill" data-fighter="arno" role="tab" aria-selected="false" style="--c: var(--arno);"><span class="name">Arno</span><span class="score">5.78</span></button>
+      <button type="button" class="legend-pill" data-fighter="me"   role="tab" aria-selected="false" style="--c: var(--me);"><span class="name">Eric</span><span class="score">4.22</span></button>
+      <button type="button" class="legend-pill" data-fighter="axel" role="tab" aria-selected="false" style="--c: var(--axel);"><span class="name">Axel</span><span class="score">2.89</span></button>
+      <button type="button" class="legend-pill" data-fighter="guil" role="tab" aria-selected="false" style="--c: var(--guil);"><span class="name">Guil</span><span class="score">2.67</span></button>
+    </div>
+
+    <div class="identities reveal d4">
+      <article class="identity" data-fighter="pier" style="--c: var(--pier);">
         <div class="identity-bignum">01</div>
         <div class="identity-phase" style="--phase-c: var(--pier);">Heavy artillery</div>
         <div class="identity-name">Pier</div>
@@ -989,7 +1019,7 @@
         </div>
       </article>
 
-      <article class="identity reveal d3" style="--c: var(--arno);">
+      <article class="identity" data-fighter="arno" style="--c: var(--arno);">
         <div class="identity-bignum">02</div>
         <div class="identity-phase" style="--phase-c: var(--arno);">Surgical ascent</div>
         <div class="identity-name">Arno</div>
@@ -1012,7 +1042,7 @@
         </div>
       </article>
 
-      <article class="identity reveal d4" style="--c: var(--me);">
+      <article class="identity" data-fighter="me" style="--c: var(--me);">
         <div class="identity-bignum">03</div>
         <div class="identity-phase" style="--phase-c: var(--me);">Old school pressure</div>
         <div class="identity-name">Eric</div>
@@ -1035,7 +1065,7 @@
         </div>
       </article>
 
-      <article class="identity reveal d5" style="--c: var(--axel);">
+      <article class="identity" data-fighter="axel" style="--c: var(--axel);">
         <div class="identity-bignum">04</div>
         <div class="identity-phase" style="--phase-c: var(--axel);">Untamed engine</div>
         <div class="identity-name">Axel</div>
@@ -1058,7 +1088,7 @@
         </div>
       </article>
 
-      <article class="identity reveal d5" style="--c: var(--guil);">
+      <article class="identity" data-fighter="guil" style="--c: var(--guil);">
         <div class="identity-bignum">05</div>
         <div class="identity-phase" style="--phase-c: var(--guil);">Unshaped stone</div>
         <div class="identity-name">Guil</div>
@@ -1653,6 +1683,47 @@
   buildOpponentRow();
   updateFighterTabs();
   selectPlan();
+})();
+</script>
+
+<script>
+(function() {
+  const carousel = document.querySelector('.identities');
+  const nav = document.querySelector('.identity-nav');
+  if (!carousel || !nav) return;
+
+  const cards = Array.from(carousel.querySelectorAll('.identity'));
+  const pills = Array.from(nav.querySelectorAll('.legend-pill'));
+  if (!cards.length || !pills.length) return;
+
+  function setActive(id) {
+    pills.forEach(p => {
+      p.setAttribute('aria-selected', p.dataset.fighter === id ? 'true' : 'false');
+    });
+  }
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      const id = pill.dataset.fighter;
+      const card = cards.find(c => c.dataset.fighter === id);
+      if (!card) return;
+      setActive(id);
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    });
+  });
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      let best = { ratio: 0, id: null };
+      entries.forEach(entry => {
+        if (entry.intersectionRatio > best.ratio) {
+          best = { ratio: entry.intersectionRatio, id: entry.target.dataset.fighter };
+        }
+      });
+      if (best.id && best.ratio >= 0.55) setActive(best.id);
+    }, { root: carousel, threshold: [0.25, 0.5, 0.75, 0.95] });
+    cards.forEach(c => observer.observe(c));
+  }
 })();
 </script>
 
