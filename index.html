@@ -364,31 +364,9 @@
   }
   .radar-selector {
     display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    padding: 14px 16px;
-    background: var(--panel);
-    border: 1px solid var(--line);
+    gap: 6px;
     max-width: 780px;
     margin: 20px auto 16px;
-  }
-  .radar-selector-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
-    flex-shrink: 0;
-  }
-  .radar-selector-pills {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    flex: 1;
-    min-width: 0;
-    justify-content: flex-start;
   }
   .radar-canvas-wrap {
     max-width: 780px;
@@ -398,21 +376,25 @@
     padding: 0;
   }
   .legend-pill {
+    flex: 1;
+    min-width: 0;
     display: inline-flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    background: transparent;
+    justify-content: center;
+    gap: 3px;
+    padding: 9px 4px;
+    min-height: 52px;
+    background: var(--panel);
     border: 1px solid var(--line);
     border-left: 3px solid var(--c);
-    min-height: 44px;
-    opacity: 0.4;
+    opacity: 0.45;
     cursor: pointer;
     font: inherit;
     color: inherit;
     transition: opacity 0.2s, background 0.2s, border-color 0.2s;
   }
-  .legend-pill:hover { opacity: 0.85; background: var(--panel); }
+  .legend-pill:hover { opacity: 0.9; }
   .legend-pill:focus-visible {
     outline: none;
     opacity: 1;
@@ -420,26 +402,27 @@
   }
   .legend-pill[aria-pressed="true"] {
     opacity: 1;
-    background: color-mix(in srgb, var(--c) 10%, var(--bg));
-    border-top-color: color-mix(in srgb, var(--c) 30%, var(--line));
-    border-right-color: color-mix(in srgb, var(--c) 30%, var(--line));
-    border-bottom-color: color-mix(in srgb, var(--c) 30%, var(--line));
+    background: color-mix(in srgb, var(--c) 14%, var(--bg));
+    border-color: var(--c);
   }
-  .legend-pill .dot { width: 10px; height: 10px; background: var(--c); flex-shrink: 0; }
   .legend-pill .name {
     font-family: 'Anton', sans-serif;
-    font-size: 20px;
-    letter-spacing: 0.04em;
+    font-size: 14px;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
+    line-height: 1;
     color: var(--ink);
   }
   .legend-pill[aria-pressed="true"] .name { color: var(--c); }
   .legend-pill .score {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--c);
+    font-size: 9px;
     font-weight: 700;
+    color: var(--c);
+    opacity: 0.8;
+    line-height: 1;
   }
+  .legend-pill[aria-pressed="true"] .score { opacity: 1; }
 
   /* ============ IDENTITY ============ */
   .identity-section { padding: var(--section-py) 0 calc(var(--section-py) * 0.6); }
@@ -845,8 +828,10 @@
     .hero-title { font-size: clamp(80px, 10vw, 160px); }
     .hero-meta { gap: 20px; }
 
-    .radar-selector { margin: 28px auto 20px; padding: 16px 20px; gap: 18px; }
-    .radar-selector-pills { gap: 10px; }
+    .radar-selector { margin: 28px auto 20px; gap: 10px; }
+    .legend-pill { padding: 14px 10px; min-height: 64px; gap: 5px; }
+    .legend-pill .name { font-size: 20px; }
+    .legend-pill .score { font-size: 12px; }
   }
 
   /* Stagger reveal */
@@ -1003,14 +988,11 @@
     <div class="section-label reveal d1">02 · Profile Overlay</div>
     <h2 class="section-title reveal d2">Shape of <span class="thin">the Fighter</span></h2>
     <div class="radar-selector reveal d3" role="group" aria-label="Pick up to two fighters to compare">
-      <div class="radar-selector-label">Compare</div>
-      <div class="radar-selector-pills">
-        <button type="button" class="legend-pill" data-fighter="pier" aria-pressed="true"  style="--c: var(--pier);"><span class="dot"></span><span class="name">Pier</span><span class="score">4.56</span></button>
-        <button type="button" class="legend-pill" data-fighter="arno" aria-pressed="true"  style="--c: var(--arno);"><span class="dot"></span><span class="name">Arno</span><span class="score">5.78</span></button>
-        <button type="button" class="legend-pill" data-fighter="me"   aria-pressed="false" style="--c: var(--me);"><span class="dot"></span><span class="name">Eric</span><span class="score">4.22</span></button>
-        <button type="button" class="legend-pill" data-fighter="axel" aria-pressed="false" style="--c: var(--axel);"><span class="dot"></span><span class="name">Axel</span><span class="score">2.89</span></button>
-        <button type="button" class="legend-pill" data-fighter="guil" aria-pressed="false" style="--c: var(--guil);"><span class="dot"></span><span class="name">Guil</span><span class="score">2.67</span></button>
-      </div>
+      <button type="button" class="legend-pill" data-fighter="pier" aria-pressed="true"  style="--c: var(--pier);"><span class="name">Pier</span><span class="score">4.56</span></button>
+      <button type="button" class="legend-pill" data-fighter="arno" aria-pressed="true"  style="--c: var(--arno);"><span class="name">Arno</span><span class="score">5.78</span></button>
+      <button type="button" class="legend-pill" data-fighter="me"   aria-pressed="false" style="--c: var(--me);"><span class="name">Eric</span><span class="score">4.22</span></button>
+      <button type="button" class="legend-pill" data-fighter="axel" aria-pressed="false" style="--c: var(--axel);"><span class="name">Axel</span><span class="score">2.89</span></button>
+      <button type="button" class="legend-pill" data-fighter="guil" aria-pressed="false" style="--c: var(--guil);"><span class="name">Guil</span><span class="score">2.67</span></button>
     </div>
     <div class="radar-canvas-wrap reveal d4">
       <canvas id="radarChart"></canvas>
