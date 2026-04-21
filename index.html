@@ -1712,18 +1712,29 @@
     });
   });
 
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver((entries) => {
-      let best = { ratio: 0, id: null };
-      entries.forEach(entry => {
-        if (entry.intersectionRatio > best.ratio) {
-          best = { ratio: entry.intersectionRatio, id: entry.target.dataset.fighter };
-        }
-      });
-      if (best.id && best.ratio >= 0.55) setActive(best.id);
-    }, { root: carousel, threshold: [0.25, 0.5, 0.75, 0.95] });
-    cards.forEach(c => observer.observe(c));
+  // Whichever card's left edge is closest to the carousel's left edge wins.
+  // That matches scroll-snap-align: start and guarantees exactly one pill lights up.
+  let rafId = null;
+  function syncActive() {
+    rafId = null;
+    const carouselLeft = carousel.getBoundingClientRect().left;
+    let bestId = null;
+    let bestDistance = Infinity;
+    cards.forEach(card => {
+      const distance = Math.abs(card.getBoundingClientRect().left - carouselLeft);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestId = card.dataset.fighter;
+      }
+    });
+    if (bestId) setActive(bestId);
   }
+  function scheduleSync() {
+    if (rafId === null) rafId = requestAnimationFrame(syncActive);
+  }
+  carousel.addEventListener('scroll', scheduleSync, { passive: true });
+  window.addEventListener('resize', scheduleSync);
+  syncActive();
 })();
 </script>
 
