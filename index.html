@@ -615,6 +615,36 @@
   }
   .identity-style strong { color: var(--ink); font-weight: 700; }
 
+  .tactical-read {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .read-line { display: block; }
+  .read-label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 4px;
+  }
+  .read-value {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .read-value .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--c);
+  }
+
   /* ============ AVERAGES STRIP ============ */
   .averages-strip { padding: 14px 0 var(--section-py); }
   .averages-strip h4 {
@@ -662,64 +692,123 @@
   .avg-cell.total .label { color: var(--gold); }
 
   /* ============ GAME PLANS ============ */
-  .gameplans-section { padding: var(--section-py) 0 calc(var(--section-py) * 1.2); }
-  .plan-fighter {
-    margin-bottom: 40px;
-    border-top: 1px solid var(--line);
-    padding-top: 32px;
-  }
-  .plan-fighter:first-of-type { border-top: none; padding-top: 0; }
-  .plan-header {
-    display: flex;
-    align-items: baseline;
-    gap: 14px;
-    margin-bottom: 22px;
-    flex-wrap: wrap;
-  }
-  .plan-header .whos {
-    font-family: 'Anton', sans-serif;
-    font-size: clamp(36px, 10vw, 52px);
-    text-transform: uppercase;
-    color: var(--c);
-    line-height: 1;
-    font-weight: 400;
-  }
-  .plan-header .whos-sub {
+  .plans-section { padding: var(--section-py) 0 calc(var(--section-py) * 1.2); }
+  .plans-intro {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-  }
-  .plan-matchups {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .plan-card {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    padding: 24px 22px;
-    position: relative;
-    border-left: 3px solid var(--opp-c);
-  }
-  .plan-vs {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--ink-mute);
-    margin-bottom: 10px;
+    color: var(--ink-dim);
+    margin-top: -16px;
+    margin-bottom: 24px;
   }
-  .plan-vs .opp { color: var(--opp-c); font-weight: 700; }
+  .plans-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    margin-bottom: 24px;
+  }
+  .picker-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .picker-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    flex-shrink: 0;
+    min-width: 66px;
+  }
+  .picker-options {
+    display: flex;
+    gap: 6px;
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 2px 0;
+  }
+  .picker-options::-webkit-scrollbar { display: none; }
+  .picker-tab {
+    font-family: 'Anton', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--c, var(--line));
+    padding: 8px 14px;
+    min-height: 44px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+  }
+  .picker-tab:hover { color: var(--ink); background: var(--panel); }
+  .picker-tab:focus-visible {
+    outline: none;
+    color: var(--ink);
+    background: var(--panel);
+    box-shadow: inset 0 0 0 2px var(--c);
+  }
+  .picker-tab[aria-selected="true"] {
+    color: var(--c);
+    background: color-mix(in srgb, var(--c) 14%, var(--bg));
+    border-color: var(--c);
+  }
+
+  .plans-stage { display: flex; justify-content: center; }
+  .plan-card {
+    width: 100%;
+    max-width: 820px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--opp-c);
+    padding: 26px 22px;
+  }
+  .plan-card[hidden] { display: none; }
+  .plan-card:not([hidden]) { animation: plan-swap 0.22s ease-out; }
+  @keyframes plan-swap {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .plan-matchup {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .plan-corner {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(34px, 10vw, 48px);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--c);
+    font-weight: 400;
+  }
+  .plan-arrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    padding-bottom: 0.2em;
+  }
   .plan-headline {
     font-family: 'Anton', sans-serif;
-    font-size: clamp(26px, 7vw, 30px);
+    font-size: clamp(26px, 7vw, 32px);
     text-transform: uppercase;
     color: var(--ink);
     line-height: 1.05;
@@ -730,8 +819,8 @@
   .plan-body {
     color: var(--ink-dim);
     font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 18px;
+    line-height: 1.65;
+    margin-bottom: 20px;
   }
   .plan-tactics {
     list-style: none;
@@ -746,7 +835,7 @@
     color: var(--ink);
     padding: 9px 0 9px 22px;
     position: relative;
-    line-height: 1.5;
+    line-height: 1.55;
     letter-spacing: 0.01em;
     font-weight: 500;
   }
@@ -800,8 +889,10 @@
     .identity { padding: 32px 24px; }
     .identity-bignum { font-size: 180px; top: -26px; right: -8px; }
 
-    .plan-matchups { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
-    .plan-card { padding: 26px; }
+    .plans-picker { padding: 22px 28px; gap: 18px; }
+    .picker-label { min-width: 82px; font-size: 11px; }
+    .picker-tab { font-size: 20px; padding: 10px 18px; }
+    .plan-card { padding: 36px 40px; }
 
     .section-title { margin-bottom: 40px; }
 
@@ -810,8 +901,6 @@
 
     .radar-canvas-wrap { margin-top: 30px; }
     .radar-legend-inline { gap: 24px; margin-top: 30px; }
-    .plan-headline { font-size: 28px; }
-    .plan-header .whos { font-size: 52px; }
   }
 
   /* Stagger reveal */
@@ -1107,13 +1196,23 @@
     <div class="identities">
       <article class="identity reveal d2" style="--c: var(--pier);">
         <div class="identity-bignum">01</div>
-        <div class="identity-phase" style="--phase-c: var(--ink-dim);">↘ Past Prime · Veteran</div>
+        <div class="identity-phase" style="--phase-c: var(--pier);">Heavy artillery</div>
         <div class="identity-name">Pier</div>
         <div class="identity-type">Type · Power Kicker</div>
         <div class="identity-weapon">
           <div class="label">Signature Weapon</div>
           <div class="weapon">Low Kick</div>
           <div class="score-line">7/10 · backed by 7/10 strength</div>
+        </div>
+        <div class="tactical-read">
+          <div class="read-line">
+            <span class="read-label">Soft spot</span>
+            <span class="read-value">Cardio <span class="num">5</span>, speed <span class="num">3</span>. Bleeds past round 2.</span>
+          </div>
+          <div class="read-line">
+            <span class="read-label">Edge</span>
+            <span class="read-value">Only fighter 7+ in both strength and low kick.</span>
+          </div>
         </div>
         <div class="identity-style">
           Heavy, grounded, one-shot damage dealer. Years have taken his speed (3), but the leg kick and clinch strength still punish. Wants to <strong>chop you down</strong>, not outpoint you. Dangerous in short exchanges, fades in deep water.
@@ -1122,13 +1221,23 @@
 
       <article class="identity reveal d3" style="--c: var(--arno);">
         <div class="identity-bignum">02</div>
-        <div class="identity-phase" style="--phase-c: var(--arno);">● In His Prime · Peak</div>
+        <div class="identity-phase" style="--phase-c: var(--arno);">Surgical ascent</div>
         <div class="identity-name">Arno</div>
         <div class="identity-type">Type · Technical Endurance</div>
         <div class="identity-weapon">
           <div class="label">Signature Weapon</div>
           <div class="weapon">Middle Kick</div>
           <div class="score-line">7/10 · backed by 8/10 cardio</div>
+        </div>
+        <div class="tactical-read">
+          <div class="read-line">
+            <span class="read-label">Soft spot</span>
+            <span class="read-value">High kick <span class="num">4</span>, the one cylinder below peak.</span>
+          </div>
+          <div class="read-line">
+            <span class="read-label">Edge</span>
+            <span class="read-value">Leads cardio (<span class="num">8</span>), speed (<span class="num">6</span>), and feints (<span class="num">6</span>) on the card.</span>
+          </div>
         </div>
         <div class="identity-style">
           The <strong>most complete</strong> fighter on the card, firing on every cylinder. Elite engine, best feints (6/10), surgical mid kicks. Thrives in deep water and wants rounds to stretch. The benchmark everyone else is measured against.
@@ -1137,13 +1246,23 @@
 
       <article class="identity reveal d4" style="--c: var(--me);">
         <div class="identity-bignum">03</div>
-        <div class="identity-phase" style="--phase-c: var(--me);">● In His Prime · Peak</div>
+        <div class="identity-phase" style="--phase-c: var(--me);">Old school pressure</div>
         <div class="identity-name">Eric</div>
         <div class="identity-type">Type · Pressure Boxer</div>
         <div class="identity-weapon">
           <div class="label">Signature Weapon</div>
           <div class="weapon">English Boxing</div>
           <div class="score-line">7/10 · backed by 6/10 pressure</div>
+        </div>
+        <div class="tactical-read">
+          <div class="read-line">
+            <span class="read-label">Soft spot</span>
+            <span class="read-value">Cardio <span class="num">3</span>, feints <span class="num">2</span>. One-window fighter.</span>
+          </div>
+          <div class="read-line">
+            <span class="read-label">Edge</span>
+            <span class="read-value">Boxing <span class="num">7</span>, four points clear of every other fighter.</span>
+          </div>
         </div>
         <div class="identity-style">
           Closes distance and <strong>boxes in the pocket</strong>. Forward pressure is the engine. Limited cardio (3) means short, violent windows: end it fast or bleed gas. Refined hand game is the sharpest weapon outside of Arno.
@@ -1152,13 +1271,23 @@
 
       <article class="identity reveal d5" style="--c: var(--axel);">
         <div class="identity-bignum">04</div>
-        <div class="identity-phase" style="--phase-c: var(--axel);">↗ Rising Prospect · High Upside</div>
+        <div class="identity-phase" style="--phase-c: var(--axel);">Untamed engine</div>
         <div class="identity-name">Axel</div>
         <div class="identity-type">Type · Raw Engine</div>
         <div class="identity-weapon">
           <div class="label">Signature Weapon</div>
           <div class="weapon">Cardio</div>
           <div class="score-line">7/10 · the only tool, but it's real</div>
+        </div>
+        <div class="tactical-read">
+          <div class="read-line">
+            <span class="read-label">Soft spot</span>
+            <span class="read-value">Technique floor at <span class="num">2</span>s and <span class="num">3</span>s outside cardio.</span>
+          </div>
+          <div class="read-line">
+            <span class="read-label">Edge</span>
+            <span class="read-value">Cardio <span class="num">7</span>, within one point of Arno's engine.</span>
+          </div>
         </div>
         <div class="identity-style">
           The <strong>blank canvas</strong> of the session, with the highest ceiling in the room. Technique still at entry level (2s and 3s), but a legit engine (cardio 7 beats every vet except Arno) and <strong>no bad habits to unlearn</strong>. Development trajectory is what matters here, not today's scores. Handled right, he's the one catching the others in a year.
@@ -1167,13 +1296,23 @@
 
       <article class="identity reveal d5" style="--c: var(--guil);">
         <div class="identity-bignum">05</div>
-        <div class="identity-phase" style="--phase-c: var(--guil);">↗ Entry Prospect · Foundation Phase</div>
+        <div class="identity-phase" style="--phase-c: var(--guil);">Unshaped stone</div>
         <div class="identity-name">Guil</div>
         <div class="identity-type">Type · Engine &amp; Frame</div>
         <div class="identity-weapon">
           <div class="label">Signature Weapon</div>
           <div class="weapon">Cardio</div>
           <div class="score-line">7/10 · backed by 5/10 strength</div>
+        </div>
+        <div class="tactical-read">
+          <div class="read-line">
+            <span class="read-label">Soft spot</span>
+            <span class="read-value">Mid kick <span class="num">1</span>, pressure <span class="num">1</span>. Zero offensive threat yet.</span>
+          </div>
+          <div class="read-line">
+            <span class="read-label">Edge</span>
+            <span class="read-value">Highest ceiling on the card. No bad habits to unlearn.</span>
+          </div>
         </div>
         <div class="identity-style">
           The <strong>newest arrival</strong>, even earlier in his arc than Axel. Technique still at baseline (1s and 2s across the board), but a legitimate engine (cardio 7) and a grounded frame (strength 5). The job today isn't to score, it's to <strong>bank clean reps</strong> and avoid picking up bad habits. The floor is being built, the tools come next.
@@ -1225,279 +1364,351 @@
 </section>
 
 <!-- ============ GAME PLANS ============ -->
-<section class="gameplans-section" id="plans">
+<section class="plans-section" id="plans">
   <div class="container">
-    <div class="section-label">04 · Sparring Game Plans</div>
-    <h2 class="section-title">The <span class="thin">Playbook</span></h2>
+    <div class="section-label reveal d1">04 · Sparring Game Plans</div>
+    <h2 class="section-title reveal d2">The <span class="thin">Playbook</span></h2>
+    <p class="plans-intro reveal d2">Pick your corner. Pick your opponent. Read the plan.</p>
 
-    <!-- PIER -->
-    <div class="plan-fighter" style="--c: var(--pier);">
-      <div class="plan-header">
-        <div class="whos">Pier</div>
-        <div class="whos-sub">Power Kicker · Vs. The Others</div>
+    <div class="plans-picker reveal d3">
+      <div class="picker-row" role="group" aria-label="Choose fighter">
+        <div class="picker-label">I am</div>
+        <div class="picker-options" data-picker="fighter">
+          <button type="button" class="picker-tab" data-fighter="pier" aria-pressed="true"  style="--c: var(--pier);">Pier</button>
+          <button type="button" class="picker-tab" data-fighter="arno" aria-pressed="false" style="--c: var(--arno);">Arno</button>
+          <button type="button" class="picker-tab" data-fighter="me"   aria-pressed="false" style="--c: var(--me);">Eric</button>
+          <button type="button" class="picker-tab" data-fighter="axel" aria-pressed="false" style="--c: var(--axel);">Axel</button>
+          <button type="button" class="picker-tab" data-fighter="guil" aria-pressed="false" style="--c: var(--guil);">Guil</button>
+        </div>
       </div>
-      <div class="plan-matchups">
-        <div class="plan-card" style="--opp-c: var(--arno);">
-          <div class="plan-vs">Vs. <span class="opp">Arno</span></div>
-          <div class="plan-headline">End it early</div>
-          <div class="plan-body">Arno has the cardio (8) and feints (6) to outlast and outthink you. Every round you give him, he grows. Detonate the legs in round one and force a clinch war where your strength (7) takes over.</div>
-          <ul class="plan-tactics">
-            <li><span class="highlight">Heavy low kicks</span> in the first exchange</li>
-            <li>Clinch when he loads a middle kick</li>
-            <li>Don't chase feints, stay planted and counter</li>
-            <li>Cut off the ring, deny him <span class="highlight">space to circle</span></li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--me);">
-          <div class="plan-vs">Vs. <span class="opp">Eric</span></div>
-          <div class="plan-headline">Stay at kicking range</div>
-          <div class="plan-body">Eric wants to close and box (7). Your boxing (3) is the weak link. Keep him at leg-kick range and punish his entries. His cardio (3) breaks before yours, so extend exchanges.</div>
-          <ul class="plan-tactics">
-            <li>Teep any forward pressure, reset range</li>
-            <li><span class="highlight">Low kick on his jab</span> to break rhythm</li>
-            <li>If he closes, clinch hard, don't box back</li>
-            <li>Force round two, his <span class="highlight">cardio breaks</span></li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--axel);">
-          <div class="plan-vs">Vs. <span class="opp">Axel</span></div>
-          <div class="plan-headline">Teach, don't hunt</div>
-          <div class="plan-body">You outclass the prospect everywhere except cardio (5 vs 7). This is a working round, not a war. Drill your tools at controlled intensity. Don't blow out his knees with low kicks just because you can.</div>
-          <ul class="plan-tactics">
-            <li>Low kicks at <span class="highlight">50% power</span>, full technique</li>
-            <li>Let him feel the clinch, don't crush him</li>
-            <li>Reset often, give him clean reps</li>
-            <li>Respect the engine, he'll push your pace</li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--guil);">
-          <div class="plan-vs">Vs. <span class="opp">Guil</span></div>
-          <div class="plan-headline">Pure teach mode</div>
-          <div class="plan-body">Biggest gap on the card. Nothing to prove. Guil has cardio (7) and almost nothing else (1s and 2s). Work on placement and rhythm, never land flush. Set the tone for how you want prospects to learn on this mat.</div>
-          <ul class="plan-tactics">
-            <li>Pull every kick, <span class="highlight">placement over power</span></li>
-            <li>Let him initiate, react clean</li>
-            <li>Zero hard clinch, no throws</li>
-            <li>Reset often, build <span class="highlight">his confidence</span></li>
-          </ul>
-        </div>
+      <div class="picker-row" role="group" aria-label="Choose opponent">
+        <div class="picker-label">Fighting</div>
+        <div class="picker-options" data-picker="opponent"></div>
       </div>
     </div>
 
-    <!-- ARNO -->
-    <div class="plan-fighter" style="--c: var(--arno);">
-      <div class="plan-header">
-        <div class="whos">Arno</div>
-        <div class="whos-sub">Technical Endurance · Vs. The Others</div>
-      </div>
-      <div class="plan-matchups">
-        <div class="plan-card" style="--opp-c: var(--pier);">
-          <div class="plan-vs">Vs. <span class="opp">Pier</span></div>
-          <div class="plan-headline">Move, check, outlast</div>
-          <div class="plan-body">Pier is slower (3) and one-dimensional. His only real threats are low kicks and clinch strength. Neutralize both by staying mobile, checking kicks, and refusing to clinch. Your cardio wins this in deep water.</div>
-          <ul class="plan-tactics">
-            <li><span class="highlight">Check every low kick</span> on the shin</li>
-            <li>Angle off, never stay square in front</li>
-            <li>Mid kicks to the body, attack his cardio</li>
-            <li>Refuse clinch, break or circle out</li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--me);">
-          <div class="plan-vs">Vs. <span class="opp">Eric</span></div>
-          <div class="plan-headline">Keep him on kicks</div>
-          <div class="plan-body">Eric is dangerous in the pocket (boxing 7, pressure 6) but weak at range and gassed quickly (cardio 3). Don't let him close. Teep, mid kick, feint, pivot. Stretch the round and his engine dies.</div>
-          <ul class="plan-tactics">
-            <li>Teep to the hip on every step in</li>
-            <li><span class="highlight">Feint the jab</span>, land mid kick to liver</li>
-            <li>Never trade in the pocket, pivot out</li>
-            <li>Extend rounds, let his <span class="highlight">cardio collapse</span></li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--axel);">
-          <div class="plan-vs">Vs. <span class="opp">Axel</span></div>
-          <div class="plan-headline">Become the teacher</div>
-          <div class="plan-body">You're the benchmark he's chasing. This is his most valuable round of the day. Slow everything down so he can read it. Show him the feint, then the kick. Reward good defense by giving him openings.</div>
-          <ul class="plan-tactics">
-            <li>Telegraph feints slowly, let him <span class="highlight">read them</span></li>
-            <li>Mid kicks at 40%, check his guard</li>
-            <li>Let him land when his technique is right</li>
-            <li>Talk after the round, not during</li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--guil);">
-          <div class="plan-vs">Vs. <span class="opp">Guil</span></div>
-          <div class="plan-headline">Teach the foundation</div>
-          <div class="plan-body">He's at Axel's level minus a year. Every technique you show is new vocabulary. Slow it all the way down, name what you do. Reward defense. Your job isn't to score, it's to build his pattern recognition from zero.</div>
-          <ul class="plan-tactics">
-            <li>Telegraph each feint, <span class="highlight">let him see it coming</span></li>
-            <li>Mid kicks at 30%, land clean on the guard</li>
-            <li>Wait for his offense, give him the opening</li>
-            <li><span class="highlight">Name the move</span> after the round</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    <div class="plans-stage reveal d4" aria-live="polite">
 
-    <!-- ERIC -->
-    <div class="plan-fighter" style="--c: var(--me);">
-      <div class="plan-header">
-        <div class="whos">Eric</div>
-        <div class="whos-sub">Pressure Boxer · Vs. The Others</div>
-      </div>
-      <div class="plan-matchups">
-        <div class="plan-card" style="--opp-c: var(--pier);">
-          <div class="plan-vs">Vs. <span class="opp">Pier</span></div>
-          <div class="plan-headline">Close and smother</div>
-          <div class="plan-body">Pier is slow (3) and his kicks need space. Rob him of both. Step inside on every kick attempt, box to the body, and tie up in the clinch. Your boxing (7) is a four-point gap over his (3).</div>
-          <ul class="plan-tactics">
-            <li>Step <span class="highlight">inside his low kick</span>, don't back up</li>
-            <li>Body-head combos in the pocket</li>
-            <li>Clinch and reset when he loads</li>
-            <li>Check or catch, never absorb the low kick</li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--arno);">
-          <div class="plan-vs">Vs. <span class="opp">Arno</span></div>
-          <div class="plan-headline">Pressure, kill the feints</div>
-          <div class="plan-body">Toughest fight on the card. Arno outclasses you in cardio, speed, and feints. Your only path is to be the aggressor from second one. Press, cut the ring, make him fight backing up where his setups fall apart.</div>
-          <ul class="plan-tactics">
-            <li><span class="highlight">Walk him down</span>, never give a free step back</li>
-            <li>Close on his feints, don't react</li>
-            <li>Jab-cross-hook into clinch to drain his gas</li>
-            <li>Commit early, cardio <span class="highlight">won't hold round 3</span></li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--axel);">
-          <div class="plan-vs">Vs. <span class="opp">Axel</span></div>
-          <div class="plan-headline">Controlled pocket work</div>
-          <div class="plan-body">Big mismatch on paper: boxing 7 vs 2, pressure 6 vs 2. This is rep work for you and defense school for him. Pressure enough for him to feel it, pull punches so he can learn to slip instead of panic.</div>
-          <ul class="plan-tactics">
-            <li>Forward pressure at <span class="highlight">70% intensity</span></li>
-            <li>Clean combinations, no head hunting</li>
-            <li>Let him tee off when you over-commit</li>
-            <li>Watch your cardio, he'll make you work</li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--guil);">
-          <div class="plan-vs">Vs. <span class="opp">Guil</span></div>
-          <div class="plan-headline">Pressure school</div>
-          <div class="plan-body">Biggest boxing gap on the card (7 vs 2) and pressure gap (6 vs 1). He can't defend combinations yet. Use this to drill your combos cleanly and leave him space to react. Half power, full form: you're rebuilding his reflexes, not testing them.</div>
-          <ul class="plan-tactics">
-            <li>Combinations at <span class="highlight">50% power</span>, full form</li>
-            <li>Pause after each set, let him reset</li>
-            <li>Never chain more than <span class="highlight">3 shots</span></li>
-            <li>Ask him to slip, not block</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+      <article class="plan-card" data-fighter="pier" data-opponent="arno" aria-label="Pier versus Arno game plan" style="--opp-c: var(--arno);">
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--pier);">Pier</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--arno);">Arno</span>
+        </header>
+        <h3 class="plan-headline">End it early</h3>
+        <p class="plan-body">Arno has the cardio (8) and feints (6) to outlast and outthink you. Every round you give him, he grows. Detonate the legs in round one and force a clinch war where your strength (7) takes over.</p>
+        <ul class="plan-tactics">
+          <li><span class="highlight">Heavy low kicks</span> in the first exchange</li>
+          <li>Clinch when he loads a middle kick</li>
+          <li>Don't chase feints, stay planted and counter</li>
+          <li>Cut off the ring, deny him <span class="highlight">space to circle</span></li>
+        </ul>
+      </article>
 
-    <!-- AXEL -->
-    <div class="plan-fighter" style="--c: var(--axel);">
-      <div class="plan-header">
-        <div class="whos">Axel</div>
-        <div class="whos-sub">The Prospect · Vs. The Vets</div>
-      </div>
-      <div class="plan-matchups">
-        <div class="plan-card" style="--opp-c: var(--pier);">
-          <div class="plan-vs">Vs. <span class="opp">Pier</span></div>
-          <div class="plan-headline">Survive the legs, stay long</div>
-          <div class="plan-body">Hardest physical test. His low kick (7) and strength (7) will punish any mistake. Use your cardio edge (7 vs 5): keep moving, refuse to clinch, make him chase. Every minute you survive is a minute of gold.</div>
-          <ul class="plan-tactics">
-            <li>Stay <span class="highlight">outside his kick range</span>, circle constantly</li>
-            <li>Check low kicks, don't block with the thigh</li>
-            <li>Never clinch, he'll manhandle you</li>
-            <li>Use your engine, <span class="highlight">keep the pace high</span></li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--arno);">
-          <div class="plan-vs">Vs. <span class="opp">Arno</span></div>
-          <div class="plan-headline">The master class</div>
-          <div class="plan-body">Most valuable round of your week. You can't beat him, but you can absorb. Watch his feints, time his mid kicks, feel how he sets up shots. Your cardio (7) is close to his (8), so bank real rounds with him, not survival ones.</div>
-          <ul class="plan-tactics">
-            <li>Stay engaged, <span class="highlight">don't shell up</span></li>
-            <li>Read his hips before the kick lands</li>
-            <li>Try one feint of your own per exchange</li>
-            <li>Ask questions between rounds, not during</li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--me);">
-          <div class="plan-vs">Vs. <span class="opp">Eric</span></div>
-          <div class="plan-headline">Distance management 101</div>
-          <div class="plan-body">Eric wants to close; you need space to survive. This is pure footwork practice. Every time he enters, you need an answer: teep, angle, or circle. His cardio (3) is your ally if you can last the opening minute.</div>
-          <ul class="plan-tactics">
-            <li>Teep on every forward step, even basic</li>
-            <li><span class="highlight">Angle, don't back straight</span></li>
-            <li>Don't trade in the pocket, you lose</li>
-            <li>Wait him out, his <span class="highlight">gas tank empties fast</span></li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--guil);">
-          <div class="plan-vs">Vs. <span class="opp">Guil</span></div>
-          <div class="plan-headline">Big brother round</div>
-          <div class="plan-body">Prospect vs prospect, one year apart. You hold the edge on every technique stat (3s where he has 2s) and on pressure (2 vs 1). Don't lord it over, just show what the same engine looks like with a few more reps. Help him feel the gap he needs to close.</div>
-          <ul class="plan-tactics">
-            <li>Share the pace, <span class="highlight">same engine league</span></li>
-            <li>Show clean technique, never power</li>
-            <li>Call out what worked between rounds</li>
-            <li>Remember you were <span class="highlight">here a year ago</span></li>
-          </ul>
-        </div>
-      </div>
-    </div>
+      <article class="plan-card" data-fighter="pier" data-opponent="me" aria-label="Pier versus Eric game plan" style="--opp-c: var(--me);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--pier);">Pier</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--me);">Eric</span>
+        </header>
+        <h3 class="plan-headline">Stay at kicking range</h3>
+        <p class="plan-body">Eric wants to close and box (7). Your boxing (3) is the weak link. Keep him at leg-kick range and punish his entries. His cardio (3) breaks before yours, so extend exchanges.</p>
+        <ul class="plan-tactics">
+          <li>Teep any forward pressure, reset range</li>
+          <li><span class="highlight">Low kick on his jab</span> to break rhythm</li>
+          <li>If he closes, clinch hard, don't box back</li>
+          <li>Force round two, his <span class="highlight">cardio breaks</span></li>
+        </ul>
+      </article>
 
-    <!-- GUIL -->
-    <div class="plan-fighter" style="--c: var(--guil);">
-      <div class="plan-header">
-        <div class="whos">Guil</div>
-        <div class="whos-sub">The Newcomer · Vs. The Room</div>
-      </div>
-      <div class="plan-matchups">
-        <div class="plan-card" style="--opp-c: var(--pier);">
-          <div class="plan-vs">Vs. <span class="opp">Pier</span></div>
-          <div class="plan-headline">Survive, don't engage</div>
-          <div class="plan-body">Hardest physical test on the card. His low kick (7) and strength (7) will punish every mistake, and you don't have the tools to answer. Cardio (7) is the only card you can play: keep moving, refuse the clinch, make him chase. Every minute survived is a win.</div>
-          <ul class="plan-tactics">
-            <li>Stay <span class="highlight">outside his kick range</span>, circle constantly</li>
-            <li>Check low kicks, don't eat them on the thigh</li>
-            <li>Never clinch, he'll manhandle you</li>
-            <li>Use your engine, <span class="highlight">keep the pace high</span></li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--arno);">
-          <div class="plan-vs">Vs. <span class="opp">Arno</span></div>
-          <div class="plan-headline">Absorb, don't compete</div>
-          <div class="plan-body">Most educational round you'll get this week. You can't win a technical exchange against the benchmark, so don't try. Use it as film in real time: watch his hips before the kick, his hands before the feint. Your cardio (7) keeps you in the round long enough to learn.</div>
-          <ul class="plan-tactics">
-            <li>Stay engaged, <span class="highlight">don't shell up</span></li>
-            <li>Read his hip before the kick lands</li>
-            <li>Don't force offense, just react</li>
-            <li>Ask <span class="highlight">specific questions</span> after, not during</li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--me);">
-          <div class="plan-vs">Vs. <span class="opp">Eric</span></div>
-          <div class="plan-headline">Distance or die</div>
-          <div class="plan-body">Eric wants the pocket, and the pocket is a grave for you (boxing 2, pressure response 1). Deny every entry. Circle, teep, anything that breaks his line. Cardio (7 vs 3) is the only real asset you have, so stretch the round past minute one.</div>
-          <ul class="plan-tactics">
-            <li>Never back straight, <span class="highlight">always angle</span></li>
-            <li>Teep or push kick on every entry</li>
-            <li>Don't trade hands, tie up and reset</li>
-            <li>Buy time, his <span class="highlight">cardio dies round one</span></li>
-          </ul>
-        </div>
-        <div class="plan-card" style="--opp-c: var(--axel);">
-          <div class="plan-vs">Vs. <span class="opp">Axel</span></div>
-          <div class="plan-headline">Prospect drill</div>
-          <div class="plan-body">Mirror match. Both of you are raw, and he's one rung up (3s to your 2s, a year of reps in the bank). No ego needed, this is the one round where neither of you risks embarrassment. Use it to work the basics at matched pace and ask him what he's learned.</div>
-          <ul class="plan-tactics">
-            <li>Stay middle distance, <span class="highlight">work the jab</span></li>
-            <li>Throw a kick on every reset</li>
-            <li>Breathe between exchanges</li>
-            <li>Watch how <span class="highlight">another novice moves</span></li>
-          </ul>
-        </div>
-      </div>
+      <article class="plan-card" data-fighter="pier" data-opponent="axel" aria-label="Pier versus Axel game plan" style="--opp-c: var(--axel);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--pier);">Pier</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--axel);">Axel</span>
+        </header>
+        <h3 class="plan-headline">Teach, don't hunt</h3>
+        <p class="plan-body">You outclass the prospect everywhere except cardio (5 vs 7). This is a working round, not a war. Drill your tools at controlled intensity. Don't blow out his knees with low kicks just because you can.</p>
+        <ul class="plan-tactics">
+          <li>Low kicks at <span class="highlight">50% power</span>, full technique</li>
+          <li>Let him feel the clinch, don't crush him</li>
+          <li>Reset often, give him clean reps</li>
+          <li>Respect the engine, he'll push your pace</li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="pier" data-opponent="guil" aria-label="Pier versus Guil game plan" style="--opp-c: var(--guil);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--pier);">Pier</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--guil);">Guil</span>
+        </header>
+        <h3 class="plan-headline">Pure teach mode</h3>
+        <p class="plan-body">Biggest gap on the card. Nothing to prove. Guil has cardio (7) and almost nothing else (1s and 2s). Work on placement and rhythm, never land flush. Set the tone for how you want prospects to learn on this mat.</p>
+        <ul class="plan-tactics">
+          <li>Pull every kick, <span class="highlight">placement over power</span></li>
+          <li>Let him initiate, react clean</li>
+          <li>Zero hard clinch, no throws</li>
+          <li>Reset often, build <span class="highlight">his confidence</span></li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="arno" data-opponent="pier" aria-label="Arno versus Pier game plan" style="--opp-c: var(--pier);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--arno);">Arno</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--pier);">Pier</span>
+        </header>
+        <h3 class="plan-headline">Move, check, outlast</h3>
+        <p class="plan-body">Pier is slower (3) and one-dimensional. His only real threats are low kicks and clinch strength. Neutralize both by staying mobile, checking kicks, and refusing to clinch. Your cardio wins this in deep water.</p>
+        <ul class="plan-tactics">
+          <li><span class="highlight">Check every low kick</span> on the shin</li>
+          <li>Angle off, never stay square in front</li>
+          <li>Mid kicks to the body, attack his cardio</li>
+          <li>Refuse clinch, break or circle out</li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="arno" data-opponent="me" aria-label="Arno versus Eric game plan" style="--opp-c: var(--me);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--arno);">Arno</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--me);">Eric</span>
+        </header>
+        <h3 class="plan-headline">Keep him on kicks</h3>
+        <p class="plan-body">Eric is dangerous in the pocket (boxing 7, pressure 6) but weak at range and gassed quickly (cardio 3). Don't let him close. Teep, mid kick, feint, pivot. Stretch the round and his engine dies.</p>
+        <ul class="plan-tactics">
+          <li>Teep to the hip on every step in</li>
+          <li><span class="highlight">Feint the jab</span>, land mid kick to liver</li>
+          <li>Never trade in the pocket, pivot out</li>
+          <li>Extend rounds, let his <span class="highlight">cardio collapse</span></li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="arno" data-opponent="axel" aria-label="Arno versus Axel game plan" style="--opp-c: var(--axel);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--arno);">Arno</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--axel);">Axel</span>
+        </header>
+        <h3 class="plan-headline">Become the teacher</h3>
+        <p class="plan-body">You're the benchmark he's chasing. This is his most valuable round of the day. Slow everything down so he can read it. Show him the feint, then the kick. Reward good defense by giving him openings.</p>
+        <ul class="plan-tactics">
+          <li>Telegraph feints slowly, let him <span class="highlight">read them</span></li>
+          <li>Mid kicks at 40%, check his guard</li>
+          <li>Let him land when his technique is right</li>
+          <li>Talk after the round, not during</li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="arno" data-opponent="guil" aria-label="Arno versus Guil game plan" style="--opp-c: var(--guil);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--arno);">Arno</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--guil);">Guil</span>
+        </header>
+        <h3 class="plan-headline">Teach the foundation</h3>
+        <p class="plan-body">He's at Axel's level minus a year. Every technique you show is new vocabulary. Slow it all the way down, name what you do. Reward defense. Your job isn't to score, it's to build his pattern recognition from zero.</p>
+        <ul class="plan-tactics">
+          <li>Telegraph each feint, <span class="highlight">let him see it coming</span></li>
+          <li>Mid kicks at 30%, land clean on the guard</li>
+          <li>Wait for his offense, give him the opening</li>
+          <li><span class="highlight">Name the move</span> after the round</li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="me" data-opponent="pier" aria-label="Eric versus Pier game plan" style="--opp-c: var(--pier);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--me);">Eric</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--pier);">Pier</span>
+        </header>
+        <h3 class="plan-headline">Close and smother</h3>
+        <p class="plan-body">Pier is slow (3) and his kicks need space. Rob him of both. Step inside on every kick attempt, box to the body, and tie up in the clinch. Your boxing (7) is a four-point gap over his (3).</p>
+        <ul class="plan-tactics">
+          <li>Step <span class="highlight">inside his low kick</span>, don't back up</li>
+          <li>Body-head combos in the pocket</li>
+          <li>Clinch and reset when he loads</li>
+          <li>Check or catch, never absorb the low kick</li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="me" data-opponent="arno" aria-label="Eric versus Arno game plan" style="--opp-c: var(--arno);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--me);">Eric</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--arno);">Arno</span>
+        </header>
+        <h3 class="plan-headline">Pressure, kill the feints</h3>
+        <p class="plan-body">Toughest fight on the card. Arno outclasses you in cardio, speed, and feints. Your only path is to be the aggressor from second one. Press, cut the ring, make him fight backing up where his setups fall apart.</p>
+        <ul class="plan-tactics">
+          <li><span class="highlight">Walk him down</span>, never give a free step back</li>
+          <li>Close on his feints, don't react</li>
+          <li>Jab-cross-hook into clinch to drain his gas</li>
+          <li>Commit early, cardio <span class="highlight">won't hold round 3</span></li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="me" data-opponent="axel" aria-label="Eric versus Axel game plan" style="--opp-c: var(--axel);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--me);">Eric</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--axel);">Axel</span>
+        </header>
+        <h3 class="plan-headline">Controlled pocket work</h3>
+        <p class="plan-body">Big mismatch on paper: boxing 7 vs 2, pressure 6 vs 2. This is rep work for you and defense school for him. Pressure enough for him to feel it, pull punches so he can learn to slip instead of panic.</p>
+        <ul class="plan-tactics">
+          <li>Forward pressure at <span class="highlight">70% intensity</span></li>
+          <li>Clean combinations, no head hunting</li>
+          <li>Let him tee off when you over-commit</li>
+          <li>Watch your cardio, he'll make you work</li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="me" data-opponent="guil" aria-label="Eric versus Guil game plan" style="--opp-c: var(--guil);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--me);">Eric</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--guil);">Guil</span>
+        </header>
+        <h3 class="plan-headline">Pressure school</h3>
+        <p class="plan-body">Biggest boxing gap on the card (7 vs 2) and pressure gap (6 vs 1). He can't defend combinations yet. Use this to drill your combos cleanly and leave him space to react. Half power, full form: you're rebuilding his reflexes, not testing them.</p>
+        <ul class="plan-tactics">
+          <li>Combinations at <span class="highlight">50% power</span>, full form</li>
+          <li>Pause after each set, let him reset</li>
+          <li>Never chain more than <span class="highlight">3 shots</span></li>
+          <li>Ask him to slip, not block</li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="axel" data-opponent="pier" aria-label="Axel versus Pier game plan" style="--opp-c: var(--pier);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--axel);">Axel</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--pier);">Pier</span>
+        </header>
+        <h3 class="plan-headline">Survive the legs, stay long</h3>
+        <p class="plan-body">Hardest physical test. His low kick (7) and strength (7) will punish any mistake. Use your cardio edge (7 vs 5): keep moving, refuse to clinch, make him chase. Every minute you survive is a minute of gold.</p>
+        <ul class="plan-tactics">
+          <li>Stay <span class="highlight">outside his kick range</span>, circle constantly</li>
+          <li>Check low kicks, don't block with the thigh</li>
+          <li>Never clinch, he'll manhandle you</li>
+          <li>Use your engine, <span class="highlight">keep the pace high</span></li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="axel" data-opponent="arno" aria-label="Axel versus Arno game plan" style="--opp-c: var(--arno);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--axel);">Axel</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--arno);">Arno</span>
+        </header>
+        <h3 class="plan-headline">The master class</h3>
+        <p class="plan-body">Most valuable round of your week. You can't beat him, but you can absorb. Watch his feints, time his mid kicks, feel how he sets up shots. Your cardio (7) is close to his (8), so bank real rounds with him, not survival ones.</p>
+        <ul class="plan-tactics">
+          <li>Stay engaged, <span class="highlight">don't shell up</span></li>
+          <li>Read his hips before the kick lands</li>
+          <li>Try one feint of your own per exchange</li>
+          <li>Ask questions between rounds, not during</li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="axel" data-opponent="me" aria-label="Axel versus Eric game plan" style="--opp-c: var(--me);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--axel);">Axel</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--me);">Eric</span>
+        </header>
+        <h3 class="plan-headline">Distance management 101</h3>
+        <p class="plan-body">Eric wants to close; you need space to survive. This is pure footwork practice. Every time he enters, you need an answer: teep, angle, or circle. His cardio (3) is your ally if you can last the opening minute.</p>
+        <ul class="plan-tactics">
+          <li>Teep on every forward step, even basic</li>
+          <li><span class="highlight">Angle, don't back straight</span></li>
+          <li>Don't trade in the pocket, you lose</li>
+          <li>Wait him out, his <span class="highlight">gas tank empties fast</span></li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="axel" data-opponent="guil" aria-label="Axel versus Guil game plan" style="--opp-c: var(--guil);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--axel);">Axel</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--guil);">Guil</span>
+        </header>
+        <h3 class="plan-headline">Big brother round</h3>
+        <p class="plan-body">Prospect vs prospect, one year apart. You hold the edge on every technique stat (3s where he has 2s) and on pressure (2 vs 1). Don't lord it over, just show what the same engine looks like with a few more reps. Help him feel the gap he needs to close.</p>
+        <ul class="plan-tactics">
+          <li>Share the pace, <span class="highlight">same engine league</span></li>
+          <li>Show clean technique, never power</li>
+          <li>Call out what worked between rounds</li>
+          <li>Remember you were <span class="highlight">here a year ago</span></li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="guil" data-opponent="pier" aria-label="Guil versus Pier game plan" style="--opp-c: var(--pier);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--guil);">Guil</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--pier);">Pier</span>
+        </header>
+        <h3 class="plan-headline">Survive, don't engage</h3>
+        <p class="plan-body">Hardest physical test on the card. His low kick (7) and strength (7) will punish every mistake, and you don't have the tools to answer. Cardio (7) is the only card you can play: keep moving, refuse the clinch, make him chase. Every minute survived is a win.</p>
+        <ul class="plan-tactics">
+          <li>Stay <span class="highlight">outside his kick range</span>, circle constantly</li>
+          <li>Check low kicks, don't eat them on the thigh</li>
+          <li>Never clinch, he'll manhandle you</li>
+          <li>Use your engine, <span class="highlight">keep the pace high</span></li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="guil" data-opponent="arno" aria-label="Guil versus Arno game plan" style="--opp-c: var(--arno);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--guil);">Guil</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--arno);">Arno</span>
+        </header>
+        <h3 class="plan-headline">Absorb, don't compete</h3>
+        <p class="plan-body">Most educational round you'll get this week. You can't win a technical exchange against the benchmark, so don't try. Use it as film in real time: watch his hips before the kick, his hands before the feint. Your cardio (7) keeps you in the round long enough to learn.</p>
+        <ul class="plan-tactics">
+          <li>Stay engaged, <span class="highlight">don't shell up</span></li>
+          <li>Read his hip before the kick lands</li>
+          <li>Don't force offense, just react</li>
+          <li>Ask <span class="highlight">specific questions</span> after, not during</li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="guil" data-opponent="me" aria-label="Guil versus Eric game plan" style="--opp-c: var(--me);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--guil);">Guil</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--me);">Eric</span>
+        </header>
+        <h3 class="plan-headline">Distance or die</h3>
+        <p class="plan-body">Eric wants the pocket, and the pocket is a grave for you (boxing 2, pressure response 1). Deny every entry. Circle, teep, anything that breaks his line. Cardio (7 vs 3) is the only real asset you have, so stretch the round past minute one.</p>
+        <ul class="plan-tactics">
+          <li>Never back straight, <span class="highlight">always angle</span></li>
+          <li>Teep or push kick on every entry</li>
+          <li>Don't trade hands, tie up and reset</li>
+          <li>Buy time, his <span class="highlight">cardio dies round one</span></li>
+        </ul>
+      </article>
+
+      <article class="plan-card" data-fighter="guil" data-opponent="axel" aria-label="Guil versus Axel game plan" style="--opp-c: var(--axel);" hidden>
+        <header class="plan-matchup">
+          <span class="plan-corner" style="--c: var(--guil);">Guil</span>
+          <span class="plan-arrow">vs</span>
+          <span class="plan-corner" style="--c: var(--axel);">Axel</span>
+        </header>
+        <h3 class="plan-headline">Prospect drill</h3>
+        <p class="plan-body">Mirror match. Both of you are raw, and he's one rung up (3s to your 2s, a year of reps in the bank). No ego needed, this is the one round where neither of you risks embarrassment. Use it to work the basics at matched pace and ask him what he's learned.</p>
+        <ul class="plan-tactics">
+          <li>Stay middle distance, <span class="highlight">work the jab</span></li>
+          <li>Throw a kick on every reset</li>
+          <li>Breathe between exchanges</li>
+          <li>Watch how <span class="highlight">another novice moves</span></li>
+        </ul>
+      </article>
+
     </div>
   </div>
 </section>
@@ -1604,6 +1815,98 @@
   } else {
     setTimeout(buildChart, 300);
   }
+})();
+</script>
+
+<script>
+(function() {
+  const fighters = [
+    { id: 'pier', name: 'Pier', color: 'var(--pier)' },
+    { id: 'arno', name: 'Arno', color: 'var(--arno)' },
+    { id: 'me',   name: 'Eric', color: 'var(--me)'   },
+    { id: 'axel', name: 'Axel', color: 'var(--axel)' },
+    { id: 'guil', name: 'Guil', color: 'var(--guil)' }
+  ];
+
+  const fighterRow  = document.querySelector('[data-picker="fighter"]');
+  const opponentRow = document.querySelector('[data-picker="opponent"]');
+  const planCards   = Array.from(document.querySelectorAll('.plans-stage .plan-card'));
+
+  if (!fighterRow || !opponentRow || !planCards.length) return;
+
+  const state = { fighter: 'pier', opponent: 'arno' };
+
+  function selectPlan() {
+    planCards.forEach(card => {
+      const match = card.dataset.fighter === state.fighter && card.dataset.opponent === state.opponent;
+      card.hidden = !match;
+    });
+  }
+
+  function updateFighterTabs() {
+    fighterRow.querySelectorAll('.picker-tab').forEach(t => {
+      t.setAttribute('aria-pressed', t.dataset.fighter === state.fighter ? 'true' : 'false');
+    });
+  }
+
+  function updateOpponentTabs() {
+    opponentRow.querySelectorAll('.picker-tab').forEach(t => {
+      t.setAttribute('aria-pressed', t.dataset.opponent === state.opponent ? 'true' : 'false');
+    });
+  }
+
+  function buildOpponentRow() {
+    opponentRow.innerHTML = '';
+    fighters.filter(f => f.id !== state.fighter).forEach(opp => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'picker-tab';
+      btn.dataset.opponent = opp.id;
+      btn.textContent = opp.name;
+      btn.style.setProperty('--c', opp.color);
+      btn.setAttribute('aria-pressed', opp.id === state.opponent ? 'true' : 'false');
+      btn.addEventListener('click', () => {
+        if (state.opponent === opp.id) return;
+        state.opponent = opp.id;
+        updateOpponentTabs();
+        selectPlan();
+      });
+      opponentRow.appendChild(btn);
+    });
+  }
+
+  fighterRow.querySelectorAll('.picker-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      if (state.fighter === t.dataset.fighter) return;
+      state.fighter = t.dataset.fighter;
+      if (state.opponent === state.fighter) {
+        const firstOther = fighters.find(f => f.id !== state.fighter);
+        state.opponent = firstOther.id;
+      }
+      updateFighterTabs();
+      buildOpponentRow();
+      selectPlan();
+    });
+  });
+
+  function wireKeyboard(container) {
+    container.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      const tabs = Array.from(container.querySelectorAll('.picker-tab'));
+      const i = tabs.indexOf(document.activeElement);
+      if (i < 0) return;
+      const next = e.key === 'ArrowRight' ? (i + 1) % tabs.length : (i - 1 + tabs.length) % tabs.length;
+      tabs[next].focus();
+      tabs[next].click();
+      e.preventDefault();
+    });
+  }
+  wireKeyboard(fighterRow);
+  wireKeyboard(opponentRow);
+
+  buildOpponentRow();
+  updateFighterTabs();
+  selectPlan();
 })();
 </script>
 
