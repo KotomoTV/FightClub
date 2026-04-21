@@ -369,33 +369,64 @@
     position: relative;
     padding: 0;
   }
+  .radar-instructions {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-top: 22px;
+    margin-bottom: 14px;
+  }
   .radar-legend-inline {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
-    margin-top: 24px;
+    margin-top: 0;
   }
   .legend-pill {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 16px;
-    background: var(--panel);
+    padding: 10px 14px;
+    background: transparent;
+    border: 1px solid var(--line);
     border-left: 3px solid var(--c);
-    min-height: 48px;
+    min-height: 44px;
+    opacity: 0.4;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition: opacity 0.2s, background 0.2s, border-color 0.2s;
   }
-  .legend-pill .dot { width: 12px; height: 12px; background: var(--c); }
+  .legend-pill:hover { opacity: 0.85; background: var(--panel); }
+  .legend-pill:focus-visible {
+    outline: none;
+    opacity: 1;
+    box-shadow: inset 0 0 0 2px var(--c);
+  }
+  .legend-pill[aria-pressed="true"] {
+    opacity: 1;
+    background: color-mix(in srgb, var(--c) 10%, var(--bg));
+    border-top-color: color-mix(in srgb, var(--c) 30%, var(--line));
+    border-right-color: color-mix(in srgb, var(--c) 30%, var(--line));
+    border-bottom-color: color-mix(in srgb, var(--c) 30%, var(--line));
+  }
+  .legend-pill .dot { width: 10px; height: 10px; background: var(--c); flex-shrink: 0; }
   .legend-pill .name {
     font-family: 'Anton', sans-serif;
-    font-size: 22px;
+    font-size: 20px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--ink);
   }
+  .legend-pill[aria-pressed="true"] .name { color: var(--c); }
   .legend-pill .score {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--c);
     font-weight: 700;
   }
@@ -964,12 +995,13 @@
     <div class="radar-canvas-wrap reveal d3">
       <canvas id="radarChart"></canvas>
     </div>
-    <div class="radar-legend-inline reveal d3">
-      <div class="legend-pill" style="--c: var(--pier);"><div class="dot"></div><div class="name">Pier</div><div class="score">4.56</div></div>
-      <div class="legend-pill" style="--c: var(--arno);"><div class="dot"></div><div class="name">Arno</div><div class="score">5.78</div></div>
-      <div class="legend-pill" style="--c: var(--me);"><div class="dot"></div><div class="name">Eric</div><div class="score">4.22</div></div>
-      <div class="legend-pill" style="--c: var(--axel);"><div class="dot"></div><div class="name">Axel</div><div class="score">2.89</div></div>
-      <div class="legend-pill" style="--c: var(--guil);"><div class="dot"></div><div class="name">Guil</div><div class="score">2.67</div></div>
+    <p class="radar-instructions reveal d3">Pick two fighters to compare</p>
+    <div class="radar-legend-inline reveal d3" role="group" aria-label="Select up to two fighters to compare on the radar">
+      <button type="button" class="legend-pill" data-fighter="pier" aria-pressed="true"  style="--c: var(--pier);"><span class="dot"></span><span class="name">Pier</span><span class="score">4.56</span></button>
+      <button type="button" class="legend-pill" data-fighter="arno" aria-pressed="true"  style="--c: var(--arno);"><span class="dot"></span><span class="name">Arno</span><span class="score">5.78</span></button>
+      <button type="button" class="legend-pill" data-fighter="me"   aria-pressed="false" style="--c: var(--me);"><span class="dot"></span><span class="name">Eric</span><span class="score">4.22</span></button>
+      <button type="button" class="legend-pill" data-fighter="axel" aria-pressed="false" style="--c: var(--axel);"><span class="dot"></span><span class="name">Axel</span><span class="score">2.89</span></button>
+      <button type="button" class="legend-pill" data-fighter="guil" aria-pressed="false" style="--c: var(--guil);"><span class="dot"></span><span class="name">Guil</span><span class="score">2.67</span></button>
     </div>
   </div>
 </section>
@@ -1509,57 +1541,52 @@
   const ctx = document.getElementById('radarChart').getContext('2d');
   const isMobile = window.matchMedia('(max-width: 640px)').matches;
 
-  const labelsMobile = ['Cardio', 'Strength', 'Speed', 'Low Kick', 'Mid Kick', 'High Kick', 'Boxing', 'Feints', 'Pressure'];
+  const labelsMobile  = ['Cardio', 'Strength', 'Speed', 'Low Kick', 'Mid Kick', 'High Kick', 'Boxing', 'Feints', 'Pressure'];
   const labelsDesktop = ['Cardio', 'Strength', 'Speed', 'Low Kick', 'Middle Kick', 'High Kick', 'English Boxing', 'Feints & Setup', 'Pressure'];
   const labels = isMobile ? labelsMobile : labelsDesktop;
 
-  const pierData = [5, 7, 3, 7, 3, 5, 3, 3, 5];
-  const arnoData = [8, 6, 6, 5, 7, 4, 5, 6, 5];
-  const ericData = [3, 6, 4, 5, 3, 2, 7, 2, 6];
-  const axelData = [7, 4, 2, 3, 2, 2, 2, 2, 2];
-  const guilData = [7, 5, 2, 2, 1, 2, 2, 2, 1];
+  const fighterData = [
+    { id: 'pier', label: 'Pier', color: '#ef4a56', fill: 'rgba(239, 74, 86, 0.2)',  data: [5, 7, 3, 7, 3, 5, 3, 3, 5] },
+    { id: 'arno', label: 'Arno', color: '#f0c25a', fill: 'rgba(240, 194, 90, 0.2)', data: [8, 6, 6, 5, 7, 4, 5, 6, 5] },
+    { id: 'me',   label: 'Eric', color: '#5bd4e4', fill: 'rgba(91, 212, 228, 0.2)', data: [3, 6, 4, 5, 3, 2, 7, 2, 6] },
+    { id: 'axel', label: 'Axel', color: '#39d968', fill: 'rgba(57, 217, 104, 0.2)', data: [7, 4, 2, 3, 2, 2, 2, 2, 2] },
+    { id: 'guil', label: 'Guil', color: '#b488ff', fill: 'rgba(180, 136, 255, 0.2)', data: [7, 5, 2, 2, 1, 2, 2, 2, 1] }
+  ];
 
-  const pointRadius = isMobile ? 3 : 5;
-  const pointHoverRadius = isMobile ? 5 : 7;
-  const labelFontSize = isMobile ? 12 : 15;
-  const tickFontSize = isMobile ? 10 : 11;
-  const borderWidth = isMobile ? 2 : 2.5;
+  const activeFighters = ['pier', 'arno'];
+
+  const pointRadius      = isMobile ? 2.5 : 4;
+  const pointHoverRadius = isMobile ? 4   : 6;
+  const labelFontSize    = isMobile ? 10  : 13;
+  const tickFontSize     = isMobile ? 9   : 10;
+  const borderWidth      = isMobile ? 1.5 : 2;
+
+  let chart;
 
   function buildChart() {
     Chart.defaults.font.family = "'Manrope', sans-serif";
     Chart.defaults.font.weight = '500';
 
-    new Chart(ctx, {
+    chart = new Chart(ctx, {
       type: 'radar',
       data: {
         labels: labels,
-        datasets: [
-          { label: 'Pier', data: pierData,
-            backgroundColor: 'rgba(239, 74, 86, 0.18)',
-            borderColor: '#ef4a56', borderWidth: borderWidth,
-            pointBackgroundColor: '#ef4a56', pointRadius: pointRadius, pointHoverRadius: pointHoverRadius },
-          { label: 'Arno', data: arnoData,
-            backgroundColor: 'rgba(240, 194, 90, 0.18)',
-            borderColor: '#f0c25a', borderWidth: borderWidth,
-            pointBackgroundColor: '#f0c25a', pointRadius: pointRadius, pointHoverRadius: pointHoverRadius },
-          { label: 'Eric', data: ericData,
-            backgroundColor: 'rgba(91, 212, 228, 0.18)',
-            borderColor: '#5bd4e4', borderWidth: borderWidth,
-            pointBackgroundColor: '#5bd4e4', pointRadius: pointRadius, pointHoverRadius: pointHoverRadius },
-          { label: 'Axel', data: axelData,
-            backgroundColor: 'rgba(57, 217, 104, 0.18)',
-            borderColor: '#39d968', borderWidth: borderWidth,
-            pointBackgroundColor: '#39d968', pointRadius: pointRadius, pointHoverRadius: pointHoverRadius },
-          { label: 'Guil', data: guilData,
-            backgroundColor: 'rgba(180, 136, 255, 0.18)',
-            borderColor: '#b488ff', borderWidth: borderWidth,
-            pointBackgroundColor: '#b488ff', pointRadius: pointRadius, pointHoverRadius: pointHoverRadius }
-        ]
+        datasets: fighterData.map(f => ({
+          label: f.label,
+          data: f.data,
+          backgroundColor: f.fill,
+          borderColor: f.color,
+          borderWidth: borderWidth,
+          pointBackgroundColor: f.color,
+          pointRadius: pointRadius,
+          pointHoverRadius: pointHoverRadius,
+          hidden: !activeFighters.includes(f.id)
+        }))
       },
       options: {
         responsive: true,
         maintainAspectRatio: true,
-        layout: { padding: isMobile ? 6 : 10 },
+        layout: { padding: isMobile ? 4 : 10 },
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -1585,7 +1612,7 @@
             pointLabels: {
               color: '#f5f2ea',
               font: { family: 'Manrope', size: labelFontSize, weight: '700' },
-              padding: isMobile ? 8 : 12
+              padding: isMobile ? 6 : 12
             }
           }
         },
@@ -1602,6 +1629,38 @@
   } else {
     setTimeout(buildChart, 300);
   }
+
+  // Interactive selector: click a pill to toggle its fighter into the compare.
+  // Always keep 2 active; a third click drops the oldest (FIFO).
+  const pills = Array.from(document.querySelectorAll('.legend-pill[data-fighter]'));
+
+  function syncChart() {
+    if (!chart) return;
+    fighterData.forEach((f, i) => {
+      chart.setDatasetVisibility(i, activeFighters.includes(f.id));
+    });
+    chart.update();
+  }
+
+  function syncPills() {
+    pills.forEach(p => {
+      p.setAttribute('aria-pressed', activeFighters.includes(p.dataset.fighter) ? 'true' : 'false');
+    });
+  }
+
+  function activate(id) {
+    if (activeFighters.includes(id)) return;
+    activeFighters.push(id);
+    if (activeFighters.length > 2) activeFighters.shift();
+    syncChart();
+    syncPills();
+  }
+
+  pills.forEach(p => {
+    p.addEventListener('click', () => activate(p.dataset.fighter));
+  });
+
+  syncPills();
 })();
 </script>
 
