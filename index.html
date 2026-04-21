@@ -481,13 +481,26 @@
     letter-spacing: -0.01em;
   }
   .identity-type {
-    margin-top: 8px;
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .identity-type .type-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 500;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
-    color: var(--ink-dim);
+    color: var(--ink-mute);
+  }
+  .identity-type .type-value {
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    line-height: 1.2;
   }
   .identity-weapon {
     margin-top: 24px;
@@ -511,13 +524,6 @@
     font-weight: 400;
     line-height: 1;
     letter-spacing: 0.01em;
-  }
-  .identity-weapon .score-line {
-    margin-top: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--c);
-    font-weight: 700;
   }
   .identity-style {
     margin-top: 20px;
@@ -1011,24 +1017,22 @@
         <div class="identity-bignum">01</div>
         <div class="identity-phase" style="--phase-c: var(--pier);">Heavy artillery</div>
         <div class="identity-name">Pier</div>
-        <div class="identity-type">Type · Power Kicker</div>
+        <div class="identity-type">
+          <span class="type-label">Type</span>
+          <span class="type-value">Power Kicker</span>
+        </div>
         <div class="identity-weapon">
           <div class="label">Signature Weapon</div>
           <div class="weapon">Low Kick</div>
-          <div class="score-line">7/10 · backed by 7/10 strength</div>
         </div>
         <div class="tactical-read">
           <div class="read-line">
-            <span class="read-label">Soft spot</span>
-            <span class="read-value">Cardio <span class="num">5</span>, speed <span class="num">3</span>. Bleeds past round 2.</span>
-          </div>
-          <div class="read-line">
             <span class="read-label">Edge</span>
-            <span class="read-value">Only fighter 7+ in both strength and low kick.</span>
+            <span class="read-value">The only name on the card pairing elite strength with an elite low kick.</span>
           </div>
         </div>
         <div class="identity-style">
-          Heavy, grounded, one-shot damage dealer. Years have taken his speed (3), but the leg kick and clinch strength still punish. Wants to <strong>chop you down</strong>, not outpoint you. Dangerous in short exchanges, fades in deep water.
+          A relic of brute force, still standing because his legs were built to break things. Every low kick is a sentence handed down, every clinch a small punishment for stepping into his orbit. Time has dulled his speed, but not his menace. In the opening minutes, he remains one of the few men in the room who can end a round with a single rotation.
         </div>
       </article>
 
@@ -1036,24 +1040,22 @@
         <div class="identity-bignum">02</div>
         <div class="identity-phase" style="--phase-c: var(--arno);">Surgical ascent</div>
         <div class="identity-name">Arno</div>
-        <div class="identity-type">Type · Technical Endurance</div>
+        <div class="identity-type">
+          <span class="type-label">Type</span>
+          <span class="type-value">Technical Endurance</span>
+        </div>
         <div class="identity-weapon">
           <div class="label">Signature Weapon</div>
           <div class="weapon">Middle Kick</div>
-          <div class="score-line">7/10 · backed by 8/10 cardio</div>
         </div>
         <div class="tactical-read">
           <div class="read-line">
-            <span class="read-label">Soft spot</span>
-            <span class="read-value">High kick <span class="num">4</span>, the one cylinder below peak.</span>
-          </div>
-          <div class="read-line">
             <span class="read-label">Edge</span>
-            <span class="read-value">Leads cardio (<span class="num">8</span>), speed (<span class="num">6</span>), and feints (<span class="num">6</span>) on the card.</span>
+            <span class="read-value">Leads the room in engine, speed, and setups.</span>
           </div>
         </div>
         <div class="identity-style">
-          The <strong>most complete</strong> fighter on the card, firing on every cylinder. Elite engine, best feints (6/10), surgical mid kicks. Thrives in deep water and wants rounds to stretch. The benchmark everyone else is measured against.
+          The finished article of the roster. Where others show seams, he shows none, dismantling opponents with the patience of a man who has already run the tape in his head. His engine is bottomless, his setups priced at the level of a fight he has already been in before. Everyone else on this card is measured against what he does on the mats.
         </div>
       </article>
 
@@ -1061,24 +1063,22 @@
         <div class="identity-bignum">03</div>
         <div class="identity-phase" style="--phase-c: var(--me);">Old school pressure</div>
         <div class="identity-name">Eric</div>
-        <div class="identity-type">Type · Pressure Boxer</div>
+        <div class="identity-type">
+          <span class="type-label">Type</span>
+          <span class="type-value">Pressure Boxer</span>
+        </div>
         <div class="identity-weapon">
           <div class="label">Signature Weapon</div>
           <div class="weapon">English Boxing</div>
-          <div class="score-line">7/10 · backed by 6/10 pressure</div>
         </div>
         <div class="tactical-read">
           <div class="read-line">
-            <span class="read-label">Soft spot</span>
-            <span class="read-value">Cardio <span class="num">3</span>, feints <span class="num">2</span>. One-window fighter.</span>
-          </div>
-          <div class="read-line">
             <span class="read-label">Edge</span>
-            <span class="read-value">Boxing <span class="num">7</span>, four points clear of every other fighter.</span>
+            <span class="read-value">The sharpest hand game on the card, clearly ahead of every rival.</span>
           </div>
         </div>
         <div class="identity-style">
-          Closes distance and <strong>boxes in the pocket</strong>. Forward pressure is the engine. Limited cardio (3) means short, violent windows: end it fast or bleed gas. Refined hand game is the sharpest weapon outside of Arno.
+          A throwback in every stance, a pressure fighter from an older school where you came forward and traded hands until someone fell. The pocket is his cathedral, and every entry is a vow to leave with knuckles marked. He was not built to dance, he was built to corner, to press, to punish. When the window opens, it rarely stays open for long.
         </div>
       </article>
 
@@ -1086,24 +1086,22 @@
         <div class="identity-bignum">04</div>
         <div class="identity-phase" style="--phase-c: var(--axel);">Untamed engine</div>
         <div class="identity-name">Axel</div>
-        <div class="identity-type">Type · Raw Engine</div>
+        <div class="identity-type">
+          <span class="type-label">Type</span>
+          <span class="type-value">Prospect</span>
+        </div>
         <div class="identity-weapon">
           <div class="label">Signature Weapon</div>
-          <div class="weapon">Cardio</div>
-          <div class="score-line">7/10 · the only tool, but it's real</div>
+          <div class="weapon">Training Discipline</div>
         </div>
         <div class="tactical-read">
           <div class="read-line">
-            <span class="read-label">Soft spot</span>
-            <span class="read-value">Technique floor at <span class="num">2</span>s and <span class="num">3</span>s outside cardio.</span>
-          </div>
-          <div class="read-line">
             <span class="read-label">Edge</span>
-            <span class="read-value">Cardio <span class="num">7</span>, within one point of Arno's engine.</span>
+            <span class="read-value">A legitimate engine, within touching distance of the benchmark.</span>
           </div>
         </div>
         <div class="identity-style">
-          The <strong>blank canvas</strong> of the session, with the highest ceiling in the room. Technique still at entry level (2s and 3s), but a legit engine (cardio 7 beats every vet except Arno) and <strong>no bad habits to unlearn</strong>. Development trajectory is what matters here, not today's scores. Handled right, he's the one catching the others in a year.
+          A prospect in the purest sense, still carving his silhouette from raw stone. What the veterans earned through years of war, he is only beginning to understand, and yet he carries the discipline of someone already further along than his time on the mats should allow. Each session is a deposit in a long account. In another year, the names above him may no longer feel so distant.
         </div>
       </article>
 
@@ -1111,24 +1109,22 @@
         <div class="identity-bignum">05</div>
         <div class="identity-phase" style="--phase-c: var(--guil);">Unshaped stone</div>
         <div class="identity-name">Guil</div>
-        <div class="identity-type">Type · Engine &amp; Frame</div>
+        <div class="identity-type">
+          <span class="type-label">Type</span>
+          <span class="type-value">Prospect</span>
+        </div>
         <div class="identity-weapon">
           <div class="label">Signature Weapon</div>
-          <div class="weapon">Cardio</div>
-          <div class="score-line">7/10 · backed by 5/10 strength</div>
+          <div class="weapon">Former Spartan</div>
         </div>
         <div class="tactical-read">
           <div class="read-line">
-            <span class="read-label">Soft spot</span>
-            <span class="read-value">Mid kick <span class="num">1</span>, pressure <span class="num">1</span>. Zero offensive threat yet.</span>
-          </div>
-          <div class="read-line">
             <span class="read-label">Edge</span>
-            <span class="read-value">Highest ceiling on the card. No bad habits to unlearn.</span>
+            <span class="read-value">The highest ceiling in the room. No habits to unlearn.</span>
           </div>
         </div>
         <div class="identity-style">
-          The <strong>newest arrival</strong>, even earlier in his arc than Axel. Technique still at baseline (1s and 2s across the board), but a legitimate engine (cardio 7) and a grounded frame (strength 5). The job today isn't to score, it's to <strong>bank clean reps</strong> and avoid picking up bad habits. The floor is being built, the tools come next.
+          A newcomer to this arena, arriving from a world where endurance was a virtue and the body was tested over hours rather than rounds. What he brings is a different kind of discipline, forged under a different flag, and it reads in every detail of his posture. What he lacks, he lacks only because it has not yet been asked of him. The foundation is already set, the tools will come.
         </div>
       </article>
     </div>
