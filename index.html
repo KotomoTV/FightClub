@@ -1076,36 +1076,40 @@
   .verdict-history-card {
     background: var(--panel);
     border: 1px solid var(--line);
-    border-left: 3px solid var(--c);
-    padding: 14px 16px;
+    padding: 16px 18px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
-  .hist-matchup { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .hist-matchup {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
   .hist-fighter {
     font-family: 'Anton', sans-serif;
-    font-size: 18px;
+    font-size: 22px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--c);
+    color: var(--ink-mute);
+    font-weight: 400;
+    line-height: 1;
   }
+  .hist-fighter.hist-winner { color: var(--c); }
   .hist-vs {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.3em;
+    font-weight: 500;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--ink-mute);
-  }
-  .hist-verdict {
-    font-family: 'Anton', sans-serif;
-    font-size: 16px;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: var(--c);
+    padding-bottom: 0.15em;
   }
   .hist-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     font-weight: 500;
@@ -1113,18 +1117,38 @@
     text-transform: uppercase;
     color: var(--ink-mute);
   }
+  .hist-summary {
+    color: var(--ink-dim);
+    font-weight: 700;
+  }
+  .hist-summary.is-draw { color: var(--gold); }
+  .hist-sep { opacity: 0.4; }
+  .hist-time { color: var(--ink-mute); }
   .hist-votes {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 10px 16px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
-    font-weight: 500;
-    margin-top: 4px;
   }
-  .hist-vote .hist-vote-judge { color: var(--c); font-weight: 700; letter-spacing: 0.1em; }
-  .hist-vote .hist-vote-arrow { color: var(--ink-mute); margin: 0 3px; }
-  .hist-vote .hist-vote-choice { color: var(--ink); }
+  .hist-vote {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .hist-vote .j {
+    color: var(--c);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .hist-vote .arrow {
+    color: var(--ink-mute);
+    margin: 0 2px;
+  }
+  .hist-vote .choice { color: var(--ink-dim); }
 
   .verdict-error {
     font-family: 'JetBrains Mono', monospace;
@@ -2432,28 +2456,47 @@
   // --- Render history ---
   function renderHistoryCard(s) {
     const votes = getVotes(s);
-    const winner = s.verdict === 'fighter_a' ? s.fighter_a : s.verdict === 'fighter_b' ? s.fighter_b : null;
-    const winnerColor = winner ? COLOR_VAR[winner] : 'var(--gold)';
-    const verdictText = winner ? esc(winner) + ' won' : 'Draw';
+    const isDraw = s.verdict === 'draw';
+    const winner = isDraw ? null : (s.verdict === 'fighter_a' ? s.fighter_a : s.fighter_b);
 
-    const voteSummary = votes.map(v =>
+    let summary = 'Draw';
+    let summaryClass = ' is-draw';
+    if (!isDraw) {
+      const winnerChoice = s.verdict;
+      const winnerCount = votes.filter(v => v.choice === winnerChoice).length;
+      summary = winnerCount >= 3 ? 'Unanimous' : 'Split';
+      summaryClass = '';
+    }
+
+    const renderFighter = (name) => {
+      const isWinner = winner === name;
+      if (isWinner) {
+        return '<span class="hist-fighter hist-winner" style="--c: ' + COLOR_VAR[name] + ';">' + esc(name) + '</span>';
+      }
+      return '<span class="hist-fighter">' + esc(name) + '</span>';
+    };
+
+    const voteRows = votes.map(v =>
       '<span class="hist-vote">' +
-        '<span class="hist-vote-judge" style="color: ' + COLOR_VAR[v.name] + ';">' + esc(v.name) + '</span>' +
-        '<span class="hist-vote-arrow">→</span>' +
-        '<span class="hist-vote-choice">' + esc(choiceLabel(v.choice, s.fighter_a, s.fighter_b)) + '</span>' +
+        '<span class="j" style="--c: ' + COLOR_VAR[v.name] + ';">' + esc(v.name) + '</span>' +
+        '<span class="arrow">→</span>' +
+        '<span class="choice">' + esc(choiceLabel(v.choice, s.fighter_a, s.fighter_b)) + '</span>' +
       '</span>'
     ).join('');
 
     return (
-      '<article class="verdict-history-card" style="--c: ' + winnerColor + ';">' +
+      '<article class="verdict-history-card">' +
         '<div class="hist-matchup">' +
-          '<span class="hist-fighter" style="--c: ' + COLOR_VAR[s.fighter_a] + ';">' + esc(s.fighter_a) + '</span>' +
+          renderFighter(s.fighter_a) +
           '<span class="hist-vs">vs</span>' +
-          '<span class="hist-fighter" style="--c: ' + COLOR_VAR[s.fighter_b] + ';">' + esc(s.fighter_b) + '</span>' +
+          renderFighter(s.fighter_b) +
         '</div>' +
-        '<div class="hist-verdict" style="--c: ' + winnerColor + ';">' + verdictText + '</div>' +
-        '<div class="hist-meta">' + formatDate(s.created_at) + '</div>' +
-        '<div class="hist-votes">' + voteSummary + '</div>' +
+        '<div class="hist-meta">' +
+          '<span class="hist-summary' + summaryClass + '">' + summary + '</span>' +
+          '<span class="hist-sep">·</span>' +
+          '<span class="hist-time">' + formatDate(s.created_at) + '</span>' +
+        '</div>' +
+        '<div class="hist-votes">' + voteRows + '</div>' +
       '</article>'
     );
   }
