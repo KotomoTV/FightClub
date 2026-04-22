@@ -791,14 +791,13 @@
   }
 
   .verdicts-identity {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-left: 3px solid var(--c, var(--gold));
-    margin-bottom: 24px;
+    gap: 8px;
+    padding: 0;
+    margin: 0 0 22px;
+    background: transparent;
+    border: 0;
   }
   .verdicts-identity .identity-label {
     font-family: 'JetBrains Mono', monospace;
@@ -809,28 +808,36 @@
     color: var(--ink-mute);
   }
   .verdicts-identity .identity-name {
-    font-family: 'Anton', sans-serif;
-    font-size: 22px;
-    letter-spacing: 0.04em;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
     color: var(--c, var(--ink));
-    flex: 1;
   }
   .identity-switch {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 4px;
+    min-height: 44px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--ink-dim);
-    border: 1px solid var(--line);
+    color: var(--ink-mute);
     background: transparent;
-    padding: 8px 12px;
-    min-height: 36px;
+    border: 0;
     cursor: pointer;
-    transition: color 0.2s, border-color 0.2s;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--ink-mute) 40%, transparent);
+    text-underline-offset: 3px;
+    transition: color 0.2s, text-decoration-color 0.2s;
   }
-  .identity-switch:hover { color: var(--ink); border-color: var(--ink-dim); }
+  .identity-switch:hover {
+    color: var(--ink);
+    text-decoration-color: var(--ink-dim);
+  }
 
   .verdicts-create { margin-bottom: 32px; }
   .create-toggle {
@@ -1873,7 +1880,7 @@
     </div>
 
     <div class="verdicts-create reveal d3">
-      <button type="button" class="create-toggle">+ Start a new sparring</button>
+      <button type="button" class="create-toggle">Create a new sparring</button>
       <div class="create-form" hidden>
         <div class="create-row">
           <div class="create-label">Red corner</div>
@@ -1885,7 +1892,7 @@
         </div>
         <div class="create-actions">
           <button type="button" class="create-cancel">Cancel</button>
-          <button type="button" class="create-confirm" disabled>Start the round</button>
+          <button type="button" class="create-confirm" disabled>Start the sparring</button>
         </div>
       </div>
     </div>
