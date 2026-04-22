@@ -1562,7 +1562,7 @@
 
   // Interactive selector: click a pill to toggle its fighter into the compare.
   // Always keep 2 active; a third click drops the oldest (FIFO).
-  const pills = Array.from(document.querySelectorAll('.legend-pill[data-fighter]'));
+  const pills = Array.from(document.querySelectorAll('.radar-selector .legend-pill[data-fighter]'));
 
   function syncChart() {
     if (!chart) return;
