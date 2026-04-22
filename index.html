@@ -593,6 +593,34 @@
     font-weight: 400;
     letter-spacing: -0.01em;
   }
+  .fighter-records {
+    margin: 12px 0 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .fighter-records .record-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .fighter-records .record-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .fighter-records .record-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+    white-space: nowrap;
+  }
   .identity-type {
     margin-top: 14px;
     display: flex;
@@ -1515,8 +1543,12 @@
     <div class="identities reveal d4">
       <article class="identity" data-fighter="pier" style="--c: var(--pier);">
         <div class="identity-bignum">01</div>
-        <div class="identity-phase" style="--phase-c: var(--pier);">Heavy artillery</div>
         <div class="identity-name">Pier</div>
+        <div class="fighter-records">
+          <div class="record-row"><span class="record-label">Fight Record</span><span class="record-value">0 - 0</span></div>
+          <div class="record-row"><span class="record-label">Sparring Record</span><span class="record-value" data-fighter-record="Pier">0 - 0 - 0</span></div>
+        </div>
+        <div class="identity-phase" style="--phase-c: var(--pier);">Heavy artillery</div>
         <div class="identity-type">
           <span class="type-label">Type</span>
           <span class="type-value">Power Kicker</span>
@@ -1538,8 +1570,12 @@
 
       <article class="identity" data-fighter="arno" style="--c: var(--arno);">
         <div class="identity-bignum">02</div>
-        <div class="identity-phase" style="--phase-c: var(--arno);">Surgical ascent</div>
         <div class="identity-name">Arno</div>
+        <div class="fighter-records">
+          <div class="record-row"><span class="record-label">Fight Record</span><span class="record-value">0 - 1</span></div>
+          <div class="record-row"><span class="record-label">Sparring Record</span><span class="record-value" data-fighter-record="Arno">0 - 0 - 0</span></div>
+        </div>
+        <div class="identity-phase" style="--phase-c: var(--arno);">Surgical ascent</div>
         <div class="identity-type">
           <span class="type-label">Type</span>
           <span class="type-value">Technical Endurance</span>
@@ -1561,8 +1597,12 @@
 
       <article class="identity" data-fighter="me" style="--c: var(--me);">
         <div class="identity-bignum">03</div>
-        <div class="identity-phase" style="--phase-c: var(--me);">Old school pressure</div>
         <div class="identity-name">Eric</div>
+        <div class="fighter-records">
+          <div class="record-row"><span class="record-label">Fight Record</span><span class="record-value">0 - 1</span></div>
+          <div class="record-row"><span class="record-label">Sparring Record</span><span class="record-value" data-fighter-record="Eric">0 - 0 - 0</span></div>
+        </div>
+        <div class="identity-phase" style="--phase-c: var(--me);">Old school pressure</div>
         <div class="identity-type">
           <span class="type-label">Type</span>
           <span class="type-value">Pressure Boxer</span>
@@ -1584,8 +1624,12 @@
 
       <article class="identity" data-fighter="axel" style="--c: var(--axel);">
         <div class="identity-bignum">04</div>
-        <div class="identity-phase" style="--phase-c: var(--axel);">Untamed engine</div>
         <div class="identity-name">Axel</div>
+        <div class="fighter-records">
+          <div class="record-row"><span class="record-label">Fight Record</span><span class="record-value">0 - 0</span></div>
+          <div class="record-row"><span class="record-label">Sparring Record</span><span class="record-value" data-fighter-record="Axel">0 - 0 - 0</span></div>
+        </div>
+        <div class="identity-phase" style="--phase-c: var(--axel);">Untamed engine</div>
         <div class="identity-type">
           <span class="type-label">Type</span>
           <span class="type-value">Prospect</span>
@@ -1607,8 +1651,12 @@
 
       <article class="identity" data-fighter="guil" style="--c: var(--guil);">
         <div class="identity-bignum">05</div>
-        <div class="identity-phase" style="--phase-c: var(--guil);">Unshaped stone</div>
         <div class="identity-name">Guil</div>
+        <div class="fighter-records">
+          <div class="record-row"><span class="record-label">Fight Record</span><span class="record-value">0 - 0</span></div>
+          <div class="record-row"><span class="record-label">Sparring Record</span><span class="record-value" data-fighter-record="Guil">0 - 0 - 0</span></div>
+        </div>
+        <div class="identity-phase" style="--phase-c: var(--guil);">Unshaped stone</div>
         <div class="identity-type">
           <span class="type-label">Type</span>
           <span class="type-value">Prospect</span>
@@ -2525,9 +2573,48 @@
       resolved.forEach(s => knownStatus.set(s.id, s.status));
       renderPending();
       renderHistory();
+      refreshSparringRecords();
     } catch (e) {
       console.error('[verdicts] fetch failed', e);
     }
+  }
+
+  // --- Sparring records (wins - losses - draws per fighter) ---
+  async function refreshSparringRecords() {
+    try {
+      const { data, error } = await sb.from('sparrings')
+        .select('fighter_a, fighter_b, verdict')
+        .eq('status', 'resolved');
+      if (error) throw error;
+      applySparringRecords(data || []);
+    } catch (e) {
+      console.error('[records] fetch failed', e);
+    }
+  }
+
+  function applySparringRecords(rows) {
+    const records = {};
+    FIGHTERS.forEach(f => { records[f] = { w: 0, l: 0, d: 0 }; });
+    rows.forEach(s => {
+      if (!records[s.fighter_a] || !records[s.fighter_b]) return;
+      if (s.verdict === 'draw') {
+        records[s.fighter_a].d++;
+        records[s.fighter_b].d++;
+      } else if (s.verdict === 'fighter_a') {
+        records[s.fighter_a].w++;
+        records[s.fighter_b].l++;
+      } else if (s.verdict === 'fighter_b') {
+        records[s.fighter_b].w++;
+        records[s.fighter_a].l++;
+      }
+    });
+    FIGHTERS.forEach(f => {
+      const el = document.querySelector('[data-fighter-record="' + f + '"]');
+      if (el) {
+        const r = records[f];
+        el.textContent = r.w + ' - ' + r.l + ' - ' + r.d;
+      }
+    });
   }
 
   // --- Realtime ---
@@ -2560,6 +2647,7 @@
         resolved = [row, ...resolved.filter(s => s.id !== row.id)];
         renderPending();
         renderHistory();
+        refreshSparringRecords();
         if (prevStatus === 'pending' || prevStatus === undefined) {
           triggerTakeover(row);
         }
@@ -2570,6 +2658,7 @@
       knownStatus.delete(row.id);
       renderPending();
       renderHistory();
+      refreshSparringRecords();
     }
   }
 
