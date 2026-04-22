@@ -1075,7 +1075,6 @@
     margin: 0 auto;
   }
   .verdict-history-card {
-    position: relative;
     background: var(--panel);
     border: 1px solid var(--line);
     padding: 18px 20px;
@@ -1083,7 +1082,14 @@
     flex-direction: column;
     gap: 14px;
   }
+  .hist-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
   .hist-fight {
+    flex: 1;
+    min-width: 0;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -1128,9 +1134,6 @@
   .hist-badge-win { background: #16a34a; }
   .hist-badge-draw { background: #f0c25a; color: #0a0a0a; }
   .hist-time {
-    position: absolute;
-    top: 18px;
-    right: 20px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     font-weight: 500;
@@ -1138,6 +1141,7 @@
     text-transform: uppercase;
     color: var(--ink-mute);
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .hist-votes {
     display: flex;
@@ -1183,11 +1187,8 @@
     }
     .hist-name { font-size: 18px; }
     .hist-badge { min-width: 96px; padding: 7px 12px; font-size: 10px; }
-    .hist-time {
-      position: static;
-      align-self: flex-start;
-      margin: 0;
-    }
+    .hist-header { gap: 10px; }
+    .hist-time { font-size: 9px; letter-spacing: 0.2em; }
     .hist-votes {
       flex-wrap: nowrap;
       overflow-x: auto;
@@ -2543,12 +2544,14 @@
 
     return (
       '<article class="verdict-history-card">' +
-        '<div class="hist-fight">' +
-          '<span class="' + nameClass('fighter_a') + '">' + esc(s.fighter_a) + '</span>' +
-          '<span class="hist-badge ' + badgeCls + '">' + badgeLabel + '</span>' +
-          '<span class="' + nameClass('fighter_b') + '">' + esc(s.fighter_b) + '</span>' +
+        '<div class="hist-header">' +
+          '<div class="hist-fight">' +
+            '<span class="' + nameClass('fighter_a') + '">' + esc(s.fighter_a) + '</span>' +
+            '<span class="hist-badge ' + badgeCls + '">' + badgeLabel + '</span>' +
+            '<span class="' + nameClass('fighter_b') + '">' + esc(s.fighter_b) + '</span>' +
+          '</div>' +
+          '<div class="hist-time">' + formatDate(s.created_at) + '</div>' +
         '</div>' +
-        '<div class="hist-time">' + formatDate(s.created_at) + '</div>' +
         '<div class="hist-votes">' + voteHtml + '</div>' +
       '</article>'
     );
