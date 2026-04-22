@@ -598,84 +598,38 @@
     margin-top: -16px;
     margin-bottom: 24px;
   }
-  .plans-picker {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 18px;
-    background: var(--bg-2);
-    border: 1px solid var(--line);
-    margin-bottom: 24px;
-  }
-  .picker-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .picker-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
-    flex-shrink: 0;
-    min-width: 66px;
-  }
-  .picker-options {
+  .plans-nav {
     display: flex;
     gap: 6px;
-    flex: 1;
+    max-width: 780px;
+    margin: 0 auto 20px;
+  }
+  .plans-stage {
+    display: flex;
+    gap: 16px;
     overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
     scrollbar-width: none;
-    padding: 2px 0;
+    padding-bottom: 14px;
+    margin-left: calc(var(--container-px) * -1);
+    margin-right: calc(var(--container-px) * -1);
+    padding-left: var(--container-px);
+    padding-right: var(--container-px);
+    scroll-padding-left: var(--container-px);
+    scroll-padding-right: var(--container-px);
   }
-  .picker-options::-webkit-scrollbar { display: none; }
-  .picker-tab {
-    font-family: 'Anton', sans-serif;
-    font-size: 18px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-    background: transparent;
-    border: 1px solid var(--line);
-    border-left: 3px solid var(--c, var(--line));
-    padding: 8px 14px;
-    min-height: 44px;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-    transition: color 0.2s, background 0.2s, border-color 0.2s;
-  }
-  .picker-tab:hover { color: var(--ink); background: var(--panel); }
-  .picker-tab:focus-visible {
-    outline: none;
-    color: var(--ink);
-    background: var(--panel);
-    box-shadow: inset 0 0 0 2px var(--c);
-  }
-  .picker-tab[aria-selected="true"] {
-    color: var(--c);
-    background: color-mix(in srgb, var(--c) 14%, var(--bg));
-    border-color: var(--c);
-  }
-
-  .plans-stage { display: flex; justify-content: center; }
+  .plans-stage::-webkit-scrollbar { display: none; }
   .plan-card {
-    width: 100%;
-    max-width: 820px;
+    flex: 0 0 calc(100% - 40px);
+    max-width: 360px;
     background: var(--panel);
     border: 1px solid var(--line);
     border-left: 3px solid var(--opp-c);
     padding: 26px 22px;
+    scroll-snap-align: start;
   }
   .plan-card[hidden] { display: none; }
-  .plan-card:not([hidden]) { animation: plan-swap 0.22s ease-out; }
-  @keyframes plan-swap {
-    from { opacity: 0; transform: translateY(4px); }
-    to   { opacity: 1; transform: none; }
-  }
   .plan-matchup {
     display: flex;
     align-items: baseline;
@@ -765,6 +719,7 @@
       --section-py: 64px;
     }
     .identity { flex: 0 0 300px; max-width: none; }
+    .plan-card { flex: 0 0 340px; max-width: none; padding: 30px 26px; }
 
     .stat-matrix { --bar-max: 64px; }
     .stat-matrix thead th { font-size: 22px; padding: 14px 4px 18px; }
@@ -799,10 +754,7 @@
     .identity { flex: 0 0 340px; padding: 32px 24px; }
     .identity-bignum { font-size: 180px; top: -26px; right: -8px; }
 
-    .plans-picker { padding: 22px 28px; gap: 18px; }
-    .picker-label { min-width: 82px; font-size: 11px; }
-    .picker-tab { font-size: 20px; padding: 10px 18px; }
-    .plan-card { padding: 36px 40px; }
+    .plan-card { flex: 0 0 380px; padding: 32px 28px; }
 
     .section-title { margin-bottom: 40px; }
 
@@ -1119,26 +1071,17 @@
   <div class="container">
     <div class="section-label reveal d1">04 · Sparring Game Plans</div>
     <h2 class="section-title reveal d2">The <span class="thin">Playbook</span></h2>
-    <p class="plans-intro reveal d2">Pick your corner. Pick your opponent. Read the plan.</p>
+    <p class="plans-intro reveal d2">Pick a corner to unlock the four matchups.</p>
 
-    <div class="plans-picker reveal d3">
-      <div class="picker-row" role="group" aria-label="Choose fighter">
-        <div class="picker-label">I am</div>
-        <div class="picker-options" data-picker="fighter">
-          <button type="button" class="picker-tab" data-fighter="pier" aria-pressed="true"  style="--c: var(--pier);">Pier</button>
-          <button type="button" class="picker-tab" data-fighter="arno" aria-pressed="false" style="--c: var(--arno);">Arno</button>
-          <button type="button" class="picker-tab" data-fighter="me"   aria-pressed="false" style="--c: var(--me);">Eric</button>
-          <button type="button" class="picker-tab" data-fighter="axel" aria-pressed="false" style="--c: var(--axel);">Axel</button>
-          <button type="button" class="picker-tab" data-fighter="guil" aria-pressed="false" style="--c: var(--guil);">Guil</button>
-        </div>
-      </div>
-      <div class="picker-row" role="group" aria-label="Choose opponent">
-        <div class="picker-label">Fighting</div>
-        <div class="picker-options" data-picker="opponent"></div>
-      </div>
+    <div class="plans-nav reveal d3" role="tablist" aria-label="Pick a fighter to reveal their game plans">
+      <button type="button" class="legend-pill" data-fighter="pier" role="tab" aria-selected="true"  style="--c: var(--pier);"><span class="name">Pier</span><span class="score">4.56</span></button>
+      <button type="button" class="legend-pill" data-fighter="arno" role="tab" aria-selected="false" style="--c: var(--arno);"><span class="name">Arno</span><span class="score">5.78</span></button>
+      <button type="button" class="legend-pill" data-fighter="me"   role="tab" aria-selected="false" style="--c: var(--me);"><span class="name">Eric</span><span class="score">4.22</span></button>
+      <button type="button" class="legend-pill" data-fighter="axel" role="tab" aria-selected="false" style="--c: var(--axel);"><span class="name">Axel</span><span class="score">2.89</span></button>
+      <button type="button" class="legend-pill" data-fighter="guil" role="tab" aria-selected="false" style="--c: var(--guil);"><span class="name">Guil</span><span class="score">2.67</span></button>
     </div>
 
-    <div class="plans-stage reveal d4" aria-live="polite">
+    <div class="plans-stage reveal d4">
 
       <article class="plan-card" data-fighter="pier" data-opponent="arno" aria-label="Pier versus Arno game plan" style="--opp-c: var(--arno);">
         <header class="plan-matchup">
@@ -1596,93 +1539,35 @@
 
 <script>
 (function() {
-  const fighters = [
-    { id: 'pier', name: 'Pier', color: 'var(--pier)' },
-    { id: 'arno', name: 'Arno', color: 'var(--arno)' },
-    { id: 'me',   name: 'Eric', color: 'var(--me)'   },
-    { id: 'axel', name: 'Axel', color: 'var(--axel)' },
-    { id: 'guil', name: 'Guil', color: 'var(--guil)' }
-  ];
+  const stage = document.querySelector('.plans-stage');
+  const nav = document.querySelector('.plans-nav');
+  if (!stage || !nav) return;
 
-  const fighterRow  = document.querySelector('[data-picker="fighter"]');
-  const opponentRow = document.querySelector('[data-picker="opponent"]');
-  const planCards   = Array.from(document.querySelectorAll('.plans-stage .plan-card'));
+  const pills = Array.from(nav.querySelectorAll('.legend-pill'));
+  const cards = Array.from(stage.querySelectorAll('.plan-card'));
+  if (!pills.length || !cards.length) return;
 
-  if (!fighterRow || !opponentRow || !planCards.length) return;
+  let active = 'pier';
 
-  const state = { fighter: 'pier', opponent: 'arno' };
-
-  function selectPlan() {
-    planCards.forEach(card => {
-      const match = card.dataset.fighter === state.fighter && card.dataset.opponent === state.opponent;
-      card.hidden = !match;
+  function render() {
+    pills.forEach(p => {
+      p.setAttribute('aria-selected', p.dataset.fighter === active ? 'true' : 'false');
     });
+    cards.forEach(c => {
+      c.hidden = c.dataset.fighter !== active;
+    });
+    stage.scrollTo({ left: 0, behavior: 'auto' });
   }
 
-  function updateFighterTabs() {
-    fighterRow.querySelectorAll('.picker-tab').forEach(t => {
-      t.setAttribute('aria-pressed', t.dataset.fighter === state.fighter ? 'true' : 'false');
-    });
-  }
-
-  function updateOpponentTabs() {
-    opponentRow.querySelectorAll('.picker-tab').forEach(t => {
-      t.setAttribute('aria-pressed', t.dataset.opponent === state.opponent ? 'true' : 'false');
-    });
-  }
-
-  function buildOpponentRow() {
-    opponentRow.innerHTML = '';
-    fighters.filter(f => f.id !== state.fighter).forEach(opp => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'picker-tab';
-      btn.dataset.opponent = opp.id;
-      btn.textContent = opp.name;
-      btn.style.setProperty('--c', opp.color);
-      btn.setAttribute('aria-pressed', opp.id === state.opponent ? 'true' : 'false');
-      btn.addEventListener('click', () => {
-        if (state.opponent === opp.id) return;
-        state.opponent = opp.id;
-        updateOpponentTabs();
-        selectPlan();
-      });
-      opponentRow.appendChild(btn);
-    });
-  }
-
-  fighterRow.querySelectorAll('.picker-tab').forEach(t => {
-    t.addEventListener('click', () => {
-      if (state.fighter === t.dataset.fighter) return;
-      state.fighter = t.dataset.fighter;
-      if (state.opponent === state.fighter) {
-        const firstOther = fighters.find(f => f.id !== state.fighter);
-        state.opponent = firstOther.id;
-      }
-      updateFighterTabs();
-      buildOpponentRow();
-      selectPlan();
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      if (active === pill.dataset.fighter) return;
+      active = pill.dataset.fighter;
+      render();
     });
   });
 
-  function wireKeyboard(container) {
-    container.addEventListener('keydown', (e) => {
-      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-      const tabs = Array.from(container.querySelectorAll('.picker-tab'));
-      const i = tabs.indexOf(document.activeElement);
-      if (i < 0) return;
-      const next = e.key === 'ArrowRight' ? (i + 1) % tabs.length : (i - 1 + tabs.length) % tabs.length;
-      tabs[next].focus();
-      tabs[next].click();
-      e.preventDefault();
-    });
-  }
-  wireKeyboard(fighterRow);
-  wireKeyboard(opponentRow);
-
-  buildOpponentRow();
-  updateFighterTabs();
-  selectPlan();
+  render();
 })();
 </script>
 
