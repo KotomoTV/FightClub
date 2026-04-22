@@ -1070,8 +1070,8 @@
   .verdicts-history {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 10px;
-    max-width: 560px;
+    gap: 12px;
+    max-width: 720px;
     margin: 0 auto;
   }
   .verdict-history-card {
@@ -1080,80 +1080,65 @@
     padding: 18px 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    text-align: center;
+    gap: 14px;
   }
-  .hist-matchup {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
-    font-family: 'Anton', sans-serif;
-    font-size: 18px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-    font-weight: 400;
-    line-height: 1;
-  }
-  .hist-matchup .vs {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--ink-mute);
-    padding-bottom: 0.15em;
-  }
-  .hist-matchup .trophy {
-    display: inline-block;
-    margin-left: 4px;
-    font-size: 0.85em;
-    vertical-align: baseline;
-  }
-  .hist-announce {
+  .hist-fight {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    gap: 14px;
   }
-  .hist-headline {
+  .hist-name {
     font-family: 'Anton', sans-serif;
-    font-size: clamp(22px, 5.5vw, 28px);
-    line-height: 1;
-    letter-spacing: 0.01em;
+    font-size: clamp(20px, 5vw, 26px);
+    letter-spacing: 0.03em;
     text-transform: uppercase;
     color: var(--ink);
     font-weight: 400;
+    line-height: 1;
   }
-  .hist-type {
+  .hist-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    min-width: 112px;
+    min-height: 30px;
+    border: 0;
+    color: #ffffff;
+  }
+  .hist-badge-win { background: #16a34a; }
+  .hist-badge-loss { background: #dc2626; }
+  .hist-badge-draw { background: #f0c25a; color: #0a0a0a; }
+  .hist-vs {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     font-weight: 500;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-  }
-  .hist-time {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--ink-mute);
+  }
+  .hist-footer {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+    flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
   }
   .hist-votes {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px 14px;
-    padding-top: 12px;
-    border-top: 1px dashed var(--line);
-    width: 100%;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    gap: 4px 10px;
+    align-items: baseline;
   }
   .hist-vote {
     display: inline-flex;
@@ -1163,7 +1148,7 @@
   .hist-vote .j {
     color: var(--ink);
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
   .hist-vote .arrow {
@@ -1171,6 +1156,44 @@
     margin: 0 2px;
   }
   .hist-vote .choice { color: var(--ink-dim); }
+  .hist-sep {
+    color: var(--ink-mute);
+    opacity: 0.5;
+  }
+  .hist-time {
+    color: var(--ink-mute);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  @media (max-width: 639px) {
+    .hist-fight {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-areas:
+        "badge-a vs badge-b"
+        "name-a  .  name-b";
+      gap: 8px 10px;
+      align-items: center;
+      justify-items: center;
+    }
+    .hist-name-a { grid-area: name-a; }
+    .hist-name-b { grid-area: name-b; }
+    .hist-badge-a { grid-area: badge-a; }
+    .hist-badge-b { grid-area: badge-b; }
+    .hist-vs { grid-area: vs; }
+    .hist-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .hist-votes {
+      flex-direction: column;
+      gap: 4px;
+    }
+    .hist-sep { display: none; }
+  }
 
   .verdict-error {
     font-family: 'JetBrains Mono', monospace;
@@ -2479,49 +2502,56 @@
   function renderHistoryCard(s) {
     const votes = getVotes(s);
     const isDraw = s.verdict === 'draw';
-    const winner = isDraw ? null : (s.verdict === 'fighter_a' ? s.fighter_a : s.fighter_b);
-
+    const winnerSide = isDraw ? null : s.verdict; // 'fighter_a' or 'fighter_b'
     const drawCount = votes.filter(v => v.choice === 'draw').length;
-    let headline, typeLabel;
+
+    // Decide badge label for winning side
+    let winLabel;
     if (isDraw) {
-      headline = 'Draw';
-      if (drawCount === 3) typeLabel = 'Unanimous decision';
-      else if (drawCount === 2) typeLabel = 'Majority decision';
-      else typeLabel = 'Split decision';
+      winLabel = 'Draw';
     } else {
-      headline = winner + ' won';
       const winnerCount = votes.filter(v => v.choice === s.verdict).length;
-      if (winnerCount === 3) typeLabel = 'Unanimous decision';
-      else if (drawCount >= 1) typeLabel = 'Majority decision';
-      else typeLabel = 'Split decision';
+      if (winnerCount === 3) winLabel = 'Unanimous';
+      else if (drawCount >= 1) winLabel = 'Majority';
+      else winLabel = 'Split';
     }
 
-    const renderFighter = (name) => {
-      const trophy = (winner === name) ? ' <span class="trophy" aria-hidden="true">🏆</span>' : '';
-      return '<span>' + esc(name) + trophy + '</span>';
+    // Badges per side
+    const badgeFor = (side) => {
+      if (isDraw) {
+        return { label: 'Draw', cls: 'hist-badge-draw' };
+      }
+      if (winnerSide === side) {
+        return { label: winLabel, cls: 'hist-badge-win' };
+      }
+      return { label: 'Defeated', cls: 'hist-badge-loss' };
     };
 
-    const voteRows = votes.map(v =>
+    const badgeA = badgeFor('fighter_a');
+    const badgeB = badgeFor('fighter_b');
+
+    const voteItems = votes.map(v =>
       '<span class="hist-vote">' +
         '<span class="j">' + esc(v.name) + '</span>' +
         '<span class="arrow">→</span>' +
         '<span class="choice">' + esc(choiceLabel(v.choice, s.fighter_a, s.fighter_b)) + '</span>' +
       '</span>'
-    ).join('');
+    );
+    const voteHtml = voteItems.join('<span class="hist-sep">·</span>');
 
     return (
       '<article class="verdict-history-card">' +
-        '<div class="hist-matchup">' +
-          renderFighter(s.fighter_a) +
-          '<span class="vs">vs</span>' +
-          renderFighter(s.fighter_b) +
+        '<div class="hist-fight">' +
+          '<span class="hist-name hist-name-a">' + esc(s.fighter_a) + '</span>' +
+          '<span class="hist-badge hist-badge-a ' + badgeA.cls + '">' + badgeA.label + '</span>' +
+          '<span class="hist-vs">vs</span>' +
+          '<span class="hist-badge hist-badge-b ' + badgeB.cls + '">' + badgeB.label + '</span>' +
+          '<span class="hist-name hist-name-b">' + esc(s.fighter_b) + '</span>' +
         '</div>' +
-        '<div class="hist-announce">' +
-          '<div class="hist-headline">' + esc(headline) + '</div>' +
-          '<div class="hist-type">' + typeLabel + '</div>' +
+        '<div class="hist-footer">' +
+          '<div class="hist-votes">' + voteHtml + '</div>' +
+          '<div class="hist-time">' + formatDate(s.created_at) + '</div>' +
         '</div>' +
-        '<div class="hist-time">' + formatDate(s.created_at) + '</div>' +
-        '<div class="hist-votes">' + voteRows + '</div>' +
       '</article>'
     );
   }
