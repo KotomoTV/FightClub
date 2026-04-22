@@ -1080,12 +1080,48 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 14px;
     text-align: center;
+  }
+  .hist-matchup {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-family: 'Anton', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    font-weight: 400;
+    line-height: 1;
+  }
+  .hist-matchup .vs {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    padding-bottom: 0.15em;
+  }
+  .hist-matchup .trophy {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 0.85em;
+    vertical-align: baseline;
+    filter: saturate(1.1);
+  }
+  .hist-announce {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
   }
   .hist-headline {
     font-family: 'Anton', sans-serif;
-    font-size: clamp(30px, 8vw, 40px);
+    font-size: clamp(26px, 7vw, 34px);
     line-height: 0.95;
     letter-spacing: -0.01em;
     text-transform: uppercase;
@@ -1099,9 +1135,8 @@
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--ink-dim);
-    margin-top: 2px;
   }
-  .hist-meta {
+  .hist-time {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     font-weight: 500;
@@ -1115,7 +1150,6 @@
     justify-content: center;
     gap: 10px 16px;
     padding-top: 12px;
-    margin-top: 6px;
     border-top: 1px dashed var(--line);
     width: 100%;
     font-family: 'JetBrains Mono', monospace;
@@ -2446,22 +2480,28 @@
     const votes = getVotes(s);
     const isDraw = s.verdict === 'draw';
     const winner = isDraw ? null : (s.verdict === 'fighter_a' ? s.fighter_a : s.fighter_b);
-    const loser = isDraw ? null : (s.verdict === 'fighter_a' ? s.fighter_b : s.fighter_a);
 
-    let headline, headlineColor, typeLabel, metaLine;
+    const drawCount = votes.filter(v => v.choice === 'draw').length;
+    let headline, headlineColor, typeLabel;
     if (isDraw) {
       headline = 'Draw';
       headlineColor = 'var(--gold)';
-      typeLabel = null;
-      metaLine = s.fighter_a + ' vs ' + s.fighter_b + ' · ' + formatDate(s.created_at);
+      if (drawCount === 3) typeLabel = 'Unanimous decision';
+      else if (drawCount === 2) typeLabel = 'Majority decision';
+      else typeLabel = 'Split decision';
     } else {
-      headline = winner;
+      headline = winner + ' won';
       headlineColor = COLOR_VAR[winner];
-      const winnerChoice = s.verdict;
-      const winnerCount = votes.filter(v => v.choice === winnerChoice).length;
-      typeLabel = winnerCount >= 3 ? 'Unanimous' : 'Split';
-      metaLine = 'over ' + loser + ' · ' + formatDate(s.created_at);
+      const winnerCount = votes.filter(v => v.choice === s.verdict).length;
+      if (winnerCount === 3) typeLabel = 'Unanimous decision';
+      else if (drawCount >= 1) typeLabel = 'Majority decision';
+      else typeLabel = 'Split decision';
     }
+
+    const renderFighter = (name) => {
+      const trophy = (winner === name) ? ' <span class="trophy" aria-hidden="true">🏆</span>' : '';
+      return '<span>' + esc(name) + trophy + '</span>';
+    };
 
     const voteRows = votes.map(v =>
       '<span class="hist-vote">' +
@@ -2473,9 +2513,16 @@
 
     return (
       '<article class="verdict-history-card">' +
-        '<div class="hist-headline" style="--c: ' + headlineColor + ';">' + esc(headline) + '</div>' +
-        (typeLabel ? '<div class="hist-type">' + typeLabel + '</div>' : '') +
-        '<div class="hist-meta">' + esc(metaLine) + '</div>' +
+        '<div class="hist-matchup">' +
+          renderFighter(s.fighter_a) +
+          '<span class="vs">vs</span>' +
+          renderFighter(s.fighter_b) +
+        '</div>' +
+        '<div class="hist-announce">' +
+          '<div class="hist-headline" style="--c: ' + headlineColor + ';">' + esc(headline) + '</div>' +
+          '<div class="hist-type">' + typeLabel + '</div>' +
+        '</div>' +
+        '<div class="hist-time">' + formatDate(s.created_at) + '</div>' +
         '<div class="hist-votes">' + voteRows + '</div>' +
       '</article>'
     );
