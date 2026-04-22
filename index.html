@@ -840,33 +840,24 @@
   }
 
   .verdicts-create { margin-bottom: 32px; }
-  .create-toggle {
-    font-family: 'Anton', sans-serif;
-    font-size: 18px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--ink);
-    background: var(--panel);
-    border: 1px solid var(--line);
-    padding: 14px 18px;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-    min-height: 52px;
-    transition: background 0.2s, border-color 0.2s;
-  }
-  .create-toggle:hover {
-    background: color-mix(in srgb, var(--gold) 10%, var(--panel));
-    border-color: color-mix(in srgb, var(--gold) 45%, var(--line));
-  }
   .create-form {
-    margin-top: 14px;
     padding: 18px;
     background: var(--panel);
     border: 1px solid var(--line);
     display: flex;
     flex-direction: column;
     gap: 14px;
+  }
+  .create-title {
+    font-family: 'Anton', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink);
+    font-weight: 400;
+    padding-bottom: 12px;
+    margin: 0;
+    border-bottom: 1px solid var(--line);
   }
   .create-row { display: flex; flex-direction: column; gap: 8px; }
   .create-label {
@@ -904,34 +895,30 @@
     border-color: var(--c);
     color: var(--c);
   }
-  .create-actions { display: flex; gap: 10px; margin-top: 4px; }
-  .create-actions button {
-    flex: 1;
+  .create-confirm {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    padding: 12px 14px;
-    min-height: 44px;
+    padding: 14px 16px;
+    min-height: 48px;
     cursor: pointer;
-    border: 1px solid var(--line);
-    background: transparent;
-    color: var(--ink-dim);
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
-  }
-  .create-actions .create-cancel:hover { color: var(--ink); border-color: var(--ink-dim); }
-  .create-actions .create-confirm {
     color: var(--bg);
     background: var(--gold);
-    border-color: var(--gold);
+    border: 1px solid var(--gold);
+    transition: filter 0.2s, background 0.2s, color 0.2s, border-color 0.2s;
   }
-  .create-actions .create-confirm:hover { filter: brightness(1.08); }
-  .create-actions .create-confirm[disabled] {
+  .create-confirm:hover { filter: brightness(1.08); }
+  .create-confirm[disabled] {
     background: transparent;
     color: var(--ink-mute);
     border-color: var(--line);
     cursor: not-allowed;
+    filter: none;
   }
 
   .verdicts-block { margin-bottom: 40px; }
@@ -1880,8 +1867,8 @@
     </div>
 
     <div class="verdicts-create reveal d3">
-      <button type="button" class="create-toggle">Create a new sparring</button>
-      <div class="create-form" hidden>
+      <div class="create-form">
+        <h3 class="create-title">Create a new sparring</h3>
         <div class="create-row">
           <div class="create-label">Red corner</div>
           <div class="create-pills" data-corner="a"></div>
@@ -1890,10 +1877,7 @@
           <div class="create-label">Blue corner</div>
           <div class="create-pills" data-corner="b"></div>
         </div>
-        <div class="create-actions">
-          <button type="button" class="create-cancel">Cancel</button>
-          <button type="button" class="create-confirm" disabled>Start the sparring</button>
-        </div>
+        <button type="button" class="create-confirm" disabled>Start the sparring</button>
       </div>
     </div>
 
@@ -2188,10 +2172,7 @@
   const identityBar = document.querySelector('.verdicts-identity');
   const identityNameEl = identityBar.querySelector('.identity-name');
   const identitySwitch = identityBar.querySelector('.identity-switch');
-  const createToggle = document.querySelector('.create-toggle');
-  const createForm = document.querySelector('.create-form');
   const createConfirm = document.querySelector('.create-confirm');
-  const createCancel = document.querySelector('.create-cancel');
   const pendingList = document.querySelector('.verdicts-pending');
   const pendingEmpty = document.querySelector('.verdicts-empty');
   const historyList = document.querySelector('.verdicts-history');
@@ -2276,15 +2257,6 @@
     });
   });
 
-  createToggle.addEventListener('click', () => {
-    const willOpen = createForm.hidden;
-    createForm.hidden = !willOpen;
-    if (willOpen) resetCreate();
-  });
-  createCancel.addEventListener('click', () => {
-    createForm.hidden = true;
-    resetCreate();
-  });
   createConfirm.addEventListener('click', async () => {
     if (createConfirm.disabled) return;
     createConfirm.disabled = true;
@@ -2294,7 +2266,6 @@
         fighter_b: createSelection.b
       });
       if (error) throw error;
-      createForm.hidden = true;
       resetCreate();
     } catch (e) {
       alert('Could not create sparring: ' + (e.message || 'unknown error'));
