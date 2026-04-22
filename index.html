@@ -720,6 +720,7 @@
     }
     .identity { flex: 0 0 300px; max-width: none; }
     .plan-card { flex: 0 0 340px; max-width: none; padding: 30px 26px; }
+    .verdicts-pending { grid-template-columns: repeat(2, 1fr); }
 
     .stat-matrix { --bar-max: 64px; }
     .stat-matrix thead th { font-size: 22px; padding: 14px 4px 18px; }
@@ -765,6 +766,456 @@
     .legend-pill { padding: 14px 10px; min-height: 64px; gap: 5px; }
     .legend-pill .name { font-size: 20px; }
     .legend-pill .score { font-size: 12px; }
+
+    .verdicts-pending { grid-template-columns: repeat(3, 1fr); }
+    .verdict-card { padding: 24px; }
+    .verdicts-history { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ============ VERDICTS ============ */
+  .verdicts-section {
+    padding: var(--section-py) 0 calc(var(--section-py) * 1.2);
+    border-top: 1px solid var(--line);
+    background: var(--bg-2);
+    min-height: 100vh;
+  }
+  .verdicts-intro {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-top: -16px;
+    margin-bottom: 28px;
+  }
+
+  .verdicts-identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--c, var(--gold));
+    margin-bottom: 24px;
+  }
+  .verdicts-identity .identity-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .verdicts-identity .identity-name {
+    font-family: 'Anton', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--c, var(--ink));
+    flex: 1;
+  }
+  .identity-switch {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    border: 1px solid var(--line);
+    background: transparent;
+    padding: 8px 12px;
+    min-height: 36px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .identity-switch:hover { color: var(--ink); border-color: var(--ink-dim); }
+
+  .verdicts-create { margin-bottom: 32px; }
+  .create-toggle {
+    font-family: 'Anton', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 14px 18px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    min-height: 52px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .create-toggle:hover {
+    background: color-mix(in srgb, var(--gold) 10%, var(--panel));
+    border-color: color-mix(in srgb, var(--gold) 45%, var(--line));
+  }
+  .create-form {
+    margin-top: 14px;
+    padding: 18px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .create-row { display: flex; flex-direction: column; gap: 8px; }
+  .create-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .create-pills {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+  }
+  .create-pill {
+    font-family: 'Anton', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--c);
+    padding: 8px 4px;
+    min-height: 44px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s, background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .create-pill:hover { opacity: 0.9; }
+  .create-pill[aria-pressed="true"] {
+    opacity: 1;
+    background: color-mix(in srgb, var(--c) 14%, var(--bg));
+    border-color: var(--c);
+    color: var(--c);
+  }
+  .create-actions { display: flex; gap: 10px; margin-top: 4px; }
+  .create-actions button {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    padding: 12px 14px;
+    min-height: 44px;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-dim);
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .create-actions .create-cancel:hover { color: var(--ink); border-color: var(--ink-dim); }
+  .create-actions .create-confirm {
+    color: var(--bg);
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .create-actions .create-confirm:hover { filter: brightness(1.08); }
+  .create-actions .create-confirm[disabled] {
+    background: transparent;
+    color: var(--ink-mute);
+    border-color: var(--line);
+    cursor: not-allowed;
+  }
+
+  .verdicts-block { margin-bottom: 40px; }
+  .verdicts-list-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+  .verdicts-empty, .verdicts-history-empty {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    padding: 14px 0;
+  }
+
+  .verdicts-pending {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .verdict-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .verdict-matchup {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .verdict-matchup .fighter {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(28px, 8vw, 36px);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--c);
+    font-weight: 400;
+  }
+  .verdict-matchup .vs {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    padding-bottom: 0.2em;
+  }
+  .verdict-progress {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+  }
+  .progress-dot.filled {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .progress-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-left: 6px;
+  }
+  .verdict-votes {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .vote-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .vote-row .vote-judge {
+    color: var(--c);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .vote-row .vote-sep { color: var(--ink-mute); }
+  .vote-row .vote-choice { color: var(--ink); }
+  .verdict-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .identify-options, .vote-options { display: flex; flex-direction: column; gap: 8px; }
+  .identify-prompt, .vote-prompt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin: 0 0 4px;
+  }
+  .identify-btn, .vote-btn {
+    font-family: 'Anton', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--c, var(--gold));
+    padding: 12px 14px;
+    min-height: 44px;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .identify-btn:hover, .vote-btn:hover {
+    color: var(--c, var(--gold));
+    background: color-mix(in srgb, var(--c, var(--gold)) 12%, var(--bg));
+    border-color: var(--c, var(--gold));
+  }
+  .vote-btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+  .verdicts-history {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .verdict-history-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--c);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .hist-matchup { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .hist-fighter {
+    font-family: 'Anton', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--c);
+  }
+  .hist-vs {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .hist-verdict {
+    font-family: 'Anton', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--c);
+  }
+  .hist-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .hist-votes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 4px;
+  }
+  .hist-vote .hist-vote-judge { color: var(--c); font-weight: 700; letter-spacing: 0.1em; }
+  .hist-vote .hist-vote-arrow { color: var(--ink-mute); margin: 0 3px; }
+  .hist-vote .hist-vote-choice { color: var(--ink); }
+
+  .verdict-error {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blood);
+    padding: 16px 0;
+  }
+
+  /* Takeover overlay */
+  .verdict-takeover {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(10, 10, 10, 0.96);
+    backdrop-filter: saturate(140%) blur(18px);
+    -webkit-backdrop-filter: saturate(140%) blur(18px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: takeover-in 0.28s cubic-bezier(0.2, 0.9, 0.2, 1);
+  }
+  .verdict-takeover[hidden] { display: none; }
+  @keyframes takeover-in { from { opacity: 0; } to { opacity: 1; } }
+
+  .takeover-card {
+    text-align: center;
+    max-width: 900px;
+  }
+  .takeover-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 18px;
+    animation: takeover-label-in 0.45s ease-out;
+  }
+  .takeover-name {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(72px, 22vw, 200px);
+    line-height: 0.86;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--takeover-c, var(--ink));
+    font-weight: 400;
+    animation: takeover-name-in 0.55s cubic-bezier(0.2, 0.9, 0.2, 1);
+  }
+  .takeover-subline {
+    margin-top: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    animation: takeover-label-in 0.7s ease-out;
+  }
+  .takeover-dismiss {
+    margin-top: 40px;
+    padding: 12px 28px;
+    min-height: 44px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    border: 1px solid var(--line);
+    background: transparent;
+    cursor: pointer;
+    animation: takeover-label-in 0.9s ease-out;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .takeover-dismiss:hover { color: var(--ink); border-color: var(--ink-dim); }
+
+  @keyframes takeover-label-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes takeover-name-in {
+    from { opacity: 0; transform: scale(0.88); }
+    to { opacity: 1; transform: scale(1); }
   }
 
   /* Stagger reveal */
@@ -792,6 +1243,7 @@
       <a href="#radar">Radar</a>
       <a href="#style">Style</a>
       <a href="#plans">Plans</a>
+      <a href="#verdicts">Verdicts</a>
     </div>
   </div>
 </nav>
@@ -1407,6 +1859,61 @@
   </div>
 </section>
 
+<!-- ============ VERDICTS ============ -->
+<section class="verdicts-section" id="verdicts">
+  <div class="container">
+    <div class="section-label reveal d1">05 · Gym Court</div>
+    <h2 class="section-title reveal d2">Sparring <span class="thin">Verdicts</span></h2>
+    <p class="verdicts-intro reveal d2">Two fighters spar. Three judges call it.</p>
+
+    <div class="verdicts-identity reveal d3" hidden>
+      <span class="identity-label">You are</span>
+      <span class="identity-name"></span>
+      <button type="button" class="identity-switch">Switch</button>
+    </div>
+
+    <div class="verdicts-create reveal d3">
+      <button type="button" class="create-toggle">+ Start a new sparring</button>
+      <div class="create-form" hidden>
+        <div class="create-row">
+          <div class="create-label">Red corner</div>
+          <div class="create-pills" data-corner="a"></div>
+        </div>
+        <div class="create-row">
+          <div class="create-label">Blue corner</div>
+          <div class="create-pills" data-corner="b"></div>
+        </div>
+        <div class="create-actions">
+          <button type="button" class="create-cancel">Cancel</button>
+          <button type="button" class="create-confirm" disabled>Start the round</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdicts-block reveal d4">
+      <h3 class="verdicts-list-title">In session</h3>
+      <div class="verdicts-pending" aria-live="polite"></div>
+      <p class="verdicts-empty">Nothing in session. Create a sparring above.</p>
+    </div>
+
+    <div class="verdicts-block reveal d4">
+      <h3 class="verdicts-list-title">Past verdicts</h3>
+      <div class="verdicts-history"></div>
+      <p class="verdicts-history-empty">No verdicts recorded yet.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Takeover overlay -->
+<div class="verdict-takeover" hidden role="alertdialog" aria-labelledby="takeover-name">
+  <div class="takeover-card">
+    <div class="takeover-label">Verdict</div>
+    <div class="takeover-name" id="takeover-name"></div>
+    <div class="takeover-subline"></div>
+    <button type="button" class="takeover-dismiss">Continue</button>
+  </div>
+</div>
+
 <footer>
   <div class="container">Compiled for Saturday · Bangkok Session · Stay sharp</div>
 </footer>
@@ -1620,6 +2127,491 @@
   carousel.addEventListener('scroll', scheduleSync, { passive: true });
   window.addEventListener('resize', scheduleSync);
   syncActive();
+})();
+</script>
+
+<!-- Supabase client for Verdicts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function() {
+  const SUPABASE_URL = 'https://jxsrcmkyzevahxzkzxrg.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_NZCCrNdhpdnMdsTjE9QbZA_T-Ov1Uz4';
+
+  const FIGHTERS = ['Pier', 'Arno', 'Eric', 'Axel', 'Guil'];
+  const COLOR_VAR = {
+    Pier: 'var(--pier)',
+    Arno: 'var(--arno)',
+    Eric: 'var(--me)',
+    Axel: 'var(--axel)',
+    Guil: 'var(--guil)'
+  };
+  const HEX = {
+    Pier: '#ef4a56',
+    Arno: '#f0c25a',
+    Eric: '#5bd4e4',
+    Axel: '#39d968',
+    Guil: '#b488ff'
+  };
+
+  const container = document.querySelector('.verdicts-section .container');
+  if (!container) return;
+
+  if (!window.supabase || !window.supabase.createClient) {
+    const err = document.createElement('p');
+    err.className = 'verdict-error';
+    err.textContent = 'Could not reach the realtime service. Retry later.';
+    container.appendChild(err);
+    return;
+  }
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // --- State ---
+  let pending = [];
+  let resolved = [];
+  let identity = sessionStorage.getItem('verdicts_identity');
+  if (identity && !FIGHTERS.includes(identity)) {
+    sessionStorage.removeItem('verdicts_identity');
+    identity = null;
+  }
+  const knownStatus = new Map();
+  const createSelection = { a: null, b: null };
+
+  // --- DOM refs ---
+  const identityBar = document.querySelector('.verdicts-identity');
+  const identityNameEl = identityBar.querySelector('.identity-name');
+  const identitySwitch = identityBar.querySelector('.identity-switch');
+  const createToggle = document.querySelector('.create-toggle');
+  const createForm = document.querySelector('.create-form');
+  const createConfirm = document.querySelector('.create-confirm');
+  const createCancel = document.querySelector('.create-cancel');
+  const pendingList = document.querySelector('.verdicts-pending');
+  const pendingEmpty = document.querySelector('.verdicts-empty');
+  const historyList = document.querySelector('.verdicts-history');
+  const historyEmpty = document.querySelector('.verdicts-history-empty');
+  const takeover = document.querySelector('.verdict-takeover');
+  const takeoverLabel = takeover.querySelector('.takeover-label');
+  const takeoverName = takeover.querySelector('.takeover-name');
+  const takeoverSubline = takeover.querySelector('.takeover-subline');
+  const takeoverDismiss = takeover.querySelector('.takeover-dismiss');
+
+  // --- Escape HTML for safe rendering ---
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  // --- Identity ---
+  function setIdentity(name) {
+    if (name) {
+      identity = name;
+      sessionStorage.setItem('verdicts_identity', name);
+    } else {
+      identity = null;
+      sessionStorage.removeItem('verdicts_identity');
+    }
+    renderIdentity();
+    renderPending();
+  }
+
+  function renderIdentity() {
+    if (identity) {
+      identityBar.hidden = false;
+      identityBar.style.setProperty('--c', COLOR_VAR[identity]);
+      identityNameEl.textContent = identity;
+      identityNameEl.style.setProperty('--c', COLOR_VAR[identity]);
+    } else {
+      identityBar.hidden = true;
+    }
+  }
+
+  identitySwitch.addEventListener('click', () => setIdentity(null));
+
+  // --- Create form ---
+  function renderCreatePills() {
+    ['a', 'b'].forEach(corner => {
+      const host = document.querySelector('.create-pills[data-corner="' + corner + '"]');
+      host.innerHTML = FIGHTERS.map(f =>
+        '<button type="button" class="create-pill" data-fighter="' + f + '" aria-pressed="false" style="--c: ' + COLOR_VAR[f] + ';">' + f + '</button>'
+      ).join('');
+    });
+  }
+
+  function updateCreateConfirm() {
+    createConfirm.disabled = !createSelection.a || !createSelection.b || createSelection.a === createSelection.b;
+  }
+
+  function resetCreate() {
+    createSelection.a = null;
+    createSelection.b = null;
+    document.querySelectorAll('.create-pill').forEach(p => p.setAttribute('aria-pressed', 'false'));
+    updateCreateConfirm();
+  }
+
+  document.querySelectorAll('.create-pills').forEach(host => {
+    host.addEventListener('click', (e) => {
+      const btn = e.target.closest('.create-pill');
+      if (!btn) return;
+      const corner = host.dataset.corner;
+      const other = corner === 'a' ? 'b' : 'a';
+      const name = btn.dataset.fighter;
+      createSelection[corner] = name;
+      // If other corner had same fighter, clear it
+      if (createSelection[other] === name) {
+        createSelection[other] = null;
+        document.querySelectorAll('.create-pills[data-corner="' + other + '"] .create-pill').forEach(p => p.setAttribute('aria-pressed', 'false'));
+      }
+      host.querySelectorAll('.create-pill').forEach(p => {
+        p.setAttribute('aria-pressed', p.dataset.fighter === name ? 'true' : 'false');
+      });
+      updateCreateConfirm();
+    });
+  });
+
+  createToggle.addEventListener('click', () => {
+    const willOpen = createForm.hidden;
+    createForm.hidden = !willOpen;
+    if (willOpen) resetCreate();
+  });
+  createCancel.addEventListener('click', () => {
+    createForm.hidden = true;
+    resetCreate();
+  });
+  createConfirm.addEventListener('click', async () => {
+    if (createConfirm.disabled) return;
+    createConfirm.disabled = true;
+    try {
+      const { error } = await sb.from('sparrings').insert({
+        fighter_a: createSelection.a,
+        fighter_b: createSelection.b
+      });
+      if (error) throw error;
+      createForm.hidden = true;
+      resetCreate();
+    } catch (e) {
+      alert('Could not create sparring: ' + (e.message || 'unknown error'));
+      updateCreateConfirm();
+    }
+  });
+
+  // --- Data fetch ---
+  async function fetchAll() {
+    try {
+      const [pRes, rRes] = await Promise.all([
+        sb.from('sparrings').select('*').eq('status', 'pending').order('created_at', { ascending: false }),
+        sb.from('sparrings').select('*').eq('status', 'resolved').order('created_at', { ascending: false }).limit(30)
+      ]);
+      pending = pRes.data || [];
+      resolved = rRes.data || [];
+      pending.forEach(s => knownStatus.set(s.id, s.status));
+      resolved.forEach(s => knownStatus.set(s.id, s.status));
+      renderPending();
+      renderHistory();
+    } catch (e) {
+      console.error('[verdicts] fetch failed', e);
+    }
+  }
+
+  // --- Realtime ---
+  function subscribeRealtime() {
+    sb.channel('sparrings-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'sparrings' }, handleRealtime)
+      .subscribe();
+  }
+
+  function handleRealtime(payload) {
+    const evt = payload.eventType;
+    const row = payload.new || payload.old;
+    if (!row) return;
+
+    if (evt === 'INSERT') {
+      if (row.status === 'pending' && !pending.find(s => s.id === row.id)) {
+        pending = [row, ...pending];
+        knownStatus.set(row.id, 'pending');
+        renderPending();
+      }
+    } else if (evt === 'UPDATE') {
+      const prevStatus = knownStatus.get(row.id);
+      knownStatus.set(row.id, row.status);
+      if (row.status === 'pending') {
+        pending = pending.map(s => s.id === row.id ? row : s);
+        if (!pending.find(s => s.id === row.id)) pending = [row, ...pending];
+        renderPending();
+      } else if (row.status === 'resolved') {
+        pending = pending.filter(s => s.id !== row.id);
+        resolved = [row, ...resolved.filter(s => s.id !== row.id)];
+        renderPending();
+        renderHistory();
+        if (prevStatus === 'pending' || prevStatus === undefined) {
+          triggerTakeover(row);
+        }
+      }
+    } else if (evt === 'DELETE') {
+      pending = pending.filter(s => s.id !== row.id);
+      resolved = resolved.filter(s => s.id !== row.id);
+      knownStatus.delete(row.id);
+      renderPending();
+      renderHistory();
+    }
+  }
+
+  // --- Helpers ---
+  function getVotes(s) {
+    const out = [];
+    if (s.vote_judge_1_name) out.push({ name: s.vote_judge_1_name, choice: s.vote_judge_1_choice });
+    if (s.vote_judge_2_name) out.push({ name: s.vote_judge_2_name, choice: s.vote_judge_2_choice });
+    if (s.vote_judge_3_name) out.push({ name: s.vote_judge_3_name, choice: s.vote_judge_3_choice });
+    return out;
+  }
+
+  function choiceLabel(choice, a, b) {
+    if (choice === 'fighter_a') return a;
+    if (choice === 'fighter_b') return b;
+    return 'Draw';
+  }
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    const diff = Date.now() - d.getTime();
+    if (diff < 60000) return 'just now';
+    const mins = Math.round(diff / 60000);
+    if (mins < 60) return mins + 'm ago';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + 'h ago';
+    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' · ' +
+           d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // --- Render pending ---
+  function renderPendingCard(s) {
+    const votes = getVotes(s);
+    const votedNames = votes.map(v => v.name);
+    const fighters = [s.fighter_a, s.fighter_b];
+    const judges = FIGHTERS.filter(f => !fighters.includes(f));
+    const remainingJudges = judges.filter(j => !votedNames.includes(j));
+
+    let actionsHtml = '';
+    if (identity && fighters.includes(identity)) {
+      actionsHtml = '<p class="verdict-status">You\'re in the ring. Let others call it.</p>';
+    } else if (identity && votedNames.includes(identity)) {
+      actionsHtml = '<p class="verdict-status">You\'ve called it. Waiting on the others.</p>';
+    } else if (identity && remainingJudges.includes(identity)) {
+      actionsHtml =
+        '<div class="vote-options">' +
+          '<p class="vote-prompt">Call it, ' + esc(identity) + ':</p>' +
+          '<button type="button" class="vote-btn" data-choice="fighter_a" style="--c: ' + COLOR_VAR[s.fighter_a] + ';">' + esc(s.fighter_a) + ' wins</button>' +
+          '<button type="button" class="vote-btn" data-choice="fighter_b" style="--c: ' + COLOR_VAR[s.fighter_b] + ';">' + esc(s.fighter_b) + ' wins</button>' +
+          '<button type="button" class="vote-btn" data-choice="draw" style="--c: var(--gold);">Draw</button>' +
+        '</div>';
+    } else if (remainingJudges.length > 0) {
+      actionsHtml =
+        '<div class="identify-options">' +
+          '<p class="identify-prompt">Claim your seat to call it:</p>' +
+          remainingJudges.map(j =>
+            '<button type="button" class="identify-btn" data-name="' + j + '" style="--c: ' + COLOR_VAR[j] + ';">I\'m ' + j + '</button>'
+          ).join('') +
+        '</div>';
+    } else {
+      actionsHtml = '<p class="verdict-status">All three judges have voted. Resolving…</p>';
+    }
+
+    const voteRowsHtml = votes.map(v =>
+      '<div class="vote-row" style="--c: ' + COLOR_VAR[v.name] + ';">' +
+        '<span class="vote-judge">' + esc(v.name) + '</span>' +
+        '<span class="vote-sep">·</span>' +
+        '<span class="vote-choice">' + esc(choiceLabel(v.choice, s.fighter_a, s.fighter_b)) + '</span>' +
+      '</div>'
+    ).join('');
+
+    const dots = [0, 1, 2].map(i => '<span class="progress-dot' + (i < votes.length ? ' filled' : '') + '"></span>').join('');
+
+    return (
+      '<article class="verdict-card" data-sparring-id="' + s.id + '">' +
+        '<header class="verdict-matchup">' +
+          '<span class="fighter" style="--c: ' + COLOR_VAR[s.fighter_a] + ';">' + esc(s.fighter_a) + '</span>' +
+          '<span class="vs">vs</span>' +
+          '<span class="fighter" style="--c: ' + COLOR_VAR[s.fighter_b] + ';">' + esc(s.fighter_b) + '</span>' +
+        '</header>' +
+        '<div class="verdict-progress">' + dots + '<span class="progress-label">' + votes.length + ' / 3 votes</span></div>' +
+        (voteRowsHtml ? '<div class="verdict-votes">' + voteRowsHtml + '</div>' : '') +
+        '<div class="verdict-actions">' + actionsHtml + '</div>' +
+      '</article>'
+    );
+  }
+
+  function renderPending() {
+    if (!pending.length) {
+      pendingList.innerHTML = '';
+      pendingEmpty.hidden = false;
+      return;
+    }
+    pendingEmpty.hidden = true;
+    pendingList.innerHTML = pending.map(renderPendingCard).join('');
+  }
+
+  // --- Render history ---
+  function renderHistoryCard(s) {
+    const votes = getVotes(s);
+    const winner = s.verdict === 'fighter_a' ? s.fighter_a : s.verdict === 'fighter_b' ? s.fighter_b : null;
+    const winnerColor = winner ? COLOR_VAR[winner] : 'var(--gold)';
+    const verdictText = winner ? esc(winner) + ' won' : 'Draw';
+
+    const voteSummary = votes.map(v =>
+      '<span class="hist-vote">' +
+        '<span class="hist-vote-judge" style="color: ' + COLOR_VAR[v.name] + ';">' + esc(v.name) + '</span>' +
+        '<span class="hist-vote-arrow">→</span>' +
+        '<span class="hist-vote-choice">' + esc(choiceLabel(v.choice, s.fighter_a, s.fighter_b)) + '</span>' +
+      '</span>'
+    ).join('');
+
+    return (
+      '<article class="verdict-history-card" style="--c: ' + winnerColor + ';">' +
+        '<div class="hist-matchup">' +
+          '<span class="hist-fighter" style="--c: ' + COLOR_VAR[s.fighter_a] + ';">' + esc(s.fighter_a) + '</span>' +
+          '<span class="hist-vs">vs</span>' +
+          '<span class="hist-fighter" style="--c: ' + COLOR_VAR[s.fighter_b] + ';">' + esc(s.fighter_b) + '</span>' +
+        '</div>' +
+        '<div class="hist-verdict" style="--c: ' + winnerColor + ';">' + verdictText + '</div>' +
+        '<div class="hist-meta">' + formatDate(s.created_at) + '</div>' +
+        '<div class="hist-votes">' + voteSummary + '</div>' +
+      '</article>'
+    );
+  }
+
+  function renderHistory() {
+    if (!resolved.length) {
+      historyList.innerHTML = '';
+      historyEmpty.hidden = false;
+      return;
+    }
+    historyEmpty.hidden = true;
+    historyList.innerHTML = resolved.map(renderHistoryCard).join('');
+  }
+
+  // --- Click delegation on pending list ---
+  const ERROR_MAP = {
+    fighter_cannot_judge: "You can't judge your own fight.",
+    judge_already_voted: "You've already called this one.",
+    sparring_already_resolved: "This round is already settled.",
+    sparring_not_found: "This sparring no longer exists.",
+    all_judges_voted: "Three judges already called it.",
+    invalid_choice: "Invalid vote choice."
+  };
+  function friendlyError(err) {
+    const msg = (err && err.message) || '';
+    for (const key in ERROR_MAP) {
+      if (msg.indexOf(key) !== -1) return ERROR_MAP[key];
+    }
+    return msg || 'Vote could not be recorded.';
+  }
+
+  pendingList.addEventListener('click', async (e) => {
+    const idBtn = e.target.closest('.identify-btn');
+    const voteBtn = e.target.closest('.vote-btn');
+    const card = e.target.closest('.verdict-card');
+    if (!card) return;
+    const sparringId = card.dataset.sparringId;
+
+    if (idBtn) {
+      setIdentity(idBtn.dataset.name);
+      primeAudio();
+      return;
+    }
+    if (voteBtn) {
+      const choice = voteBtn.dataset.choice;
+      if (!identity) return;
+      // Disable all vote buttons on this card to prevent double-click
+      card.querySelectorAll('.vote-btn').forEach(b => b.disabled = true);
+      primeAudio();
+      try {
+        const { error } = await sb.rpc('cast_sparring_vote', {
+          p_sparring_id: sparringId,
+          p_judge_name: identity,
+          p_choice: choice
+        });
+        if (error) throw error;
+      } catch (err) {
+        alert(friendlyError(err));
+        card.querySelectorAll('.vote-btn').forEach(b => b.disabled = false);
+      }
+    }
+  });
+
+  // --- Takeover ---
+  let takeoverTimer = null;
+  function triggerTakeover(record) {
+    if (record.verdict === 'draw') {
+      takeoverLabel.textContent = 'Split decision';
+      takeoverName.textContent = 'Draw';
+      takeoverName.style.setProperty('--takeover-c', '#f0c25a');
+    } else {
+      const winner = record.verdict === 'fighter_a' ? record.fighter_a : record.fighter_b;
+      takeoverLabel.textContent = 'Winner';
+      takeoverName.textContent = winner;
+      takeoverName.style.setProperty('--takeover-c', HEX[winner] || '#f0c25a');
+    }
+    takeoverSubline.textContent = record.fighter_a + ' vs ' + record.fighter_b;
+
+    takeover.hidden = false;
+
+    try { if (navigator.vibrate) navigator.vibrate([80, 60, 220]); } catch (e) {}
+    playVerdictBeep();
+
+    clearTimeout(takeoverTimer);
+    takeoverTimer = setTimeout(dismissTakeover, 5000);
+  }
+  function dismissTakeover() {
+    takeover.hidden = true;
+    clearTimeout(takeoverTimer);
+  }
+  takeoverDismiss.addEventListener('click', dismissTakeover);
+  takeover.addEventListener('click', (e) => {
+    if (e.target === takeover) dismissTakeover();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !takeover.hidden) dismissTakeover();
+  });
+
+  // --- Audio ---
+  let audioCtx = null;
+  function primeAudio() {
+    try {
+      if (!audioCtx) {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx) audioCtx = new Ctx();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    } catch (e) {}
+  }
+  function playVerdictBeep() {
+    try {
+      primeAudio();
+      if (!audioCtx) return;
+      const ctx = audioCtx;
+      const beep = (freq, start, dur, peak) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+        gain.gain.setValueAtTime(0, ctx.currentTime + start);
+        gain.gain.linearRampToValueAtTime(peak, ctx.currentTime + start + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + start);
+        osc.stop(ctx.currentTime + start + dur);
+      };
+      beep(523, 0, 0.18, 0.22);
+      beep(784, 0.16, 0.55, 0.28);
+    } catch (e) {}
+  }
+
+  // --- Init ---
+  renderCreatePills();
+  renderIdentity();
+  fetchAll();
+  subscribeRealtime();
 })();
 </script>
 
