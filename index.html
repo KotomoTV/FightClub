@@ -357,7 +357,7 @@
 
   /* ============ RADAR / ROSTER ============ */
   .roster-section {
-    padding: var(--section-py) 0 calc(var(--section-py) * 0.9);
+    padding: var(--section-py) 0 calc(var(--section-py) * 0.3);
   }
   .subsection-divider {
     border: 0;
@@ -1363,8 +1363,8 @@
     position: fixed;
     bottom: 24px;
     right: 24px;
-    width: 56px;
-    height: 56px;
+    width: 76px;
+    height: 76px;
     border-radius: 50%;
     background: var(--panel);
     border: 1px solid var(--line);
@@ -1373,7 +1373,7 @@
     justify-content: center;
     text-decoration: none;
     color: var(--ink);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
     z-index: 85;
     transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease, border-color 0.2s ease;
   }
@@ -1393,15 +1393,15 @@
     transform: translateY(18px);
   }
   .fv-icon {
-    font-size: 22px;
+    font-size: 30px;
     line-height: 1;
   }
   .fv-live {
     position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 11px;
-    height: 11px;
+    top: 8px;
+    right: 8px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     background: #ef4444;
     box-shadow: 0 0 0 2px var(--panel);
@@ -1416,18 +1416,18 @@
     .floating-verdicts {
       bottom: 16px;
       right: 16px;
-      width: 48px;
-      height: 48px;
+      width: 72px;
+      height: 72px;
     }
-    .fv-icon { font-size: 20px; }
-    .fv-live { top: 5px; right: 5px; width: 10px; height: 10px; }
+    .fv-icon { font-size: 28px; }
+    .fv-live { top: 7px; right: 7px; width: 13px; height: 13px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .fv-live { animation: none; }
     .floating-verdicts { transition: opacity 0.2s; }
   }
 
-  .roster-section, .plans-section { padding-bottom: calc(var(--section-py) + 90px); }
+  .plans-section { padding-top: calc(var(--section-py) * 0.5); padding-bottom: calc(var(--section-py) * 1.2 + 90px); }
 
   /* Stagger reveal */
   .reveal {
@@ -2122,7 +2122,7 @@
 </footer>
 
 <a href="#verdicts" class="floating-verdicts" id="floating-verdicts" aria-label="Go to Sparring Verdicts">
-  <span class="fv-icon" aria-hidden="true">⚖️</span>
+  <span class="fv-icon" aria-hidden="true">🔔</span>
   <span class="fv-live" hidden></span>
 </a>
 
