@@ -355,7 +355,76 @@
     height: 3px;
   }
 
-  /* ============ RADAR ============ */
+  /* ============ RADAR / ROSTER ============ */
+  .roster-section {
+    padding: var(--section-py) 0 calc(var(--section-py) * 0.9);
+  }
+  .subsection-divider {
+    border: 0;
+    border-top: 1px solid var(--line);
+    max-width: 240px;
+    margin: 56px auto 48px;
+  }
+  .subsection-title {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(26px, 6vw, 40px);
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+    font-weight: 400;
+    color: var(--ink);
+    text-align: center;
+  }
+  .stats-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 4px;
+    min-height: 44px;
+    background: transparent;
+    border: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    cursor: pointer;
+    margin: 28px auto 0;
+    transition: color 0.2s;
+  }
+  .stats-toggle:hover { color: var(--ink); }
+  .stats-toggle:focus-visible {
+    outline: none;
+    color: var(--ink);
+    box-shadow: 0 0 0 2px var(--line) inset;
+  }
+  .stats-toggle .toggle-chev {
+    display: inline-block;
+    font-size: 9px;
+    line-height: 1;
+    transform: translateY(-1px);
+    transition: transform 0.25s ease-out;
+  }
+  .stats-toggle[aria-expanded="true"] .toggle-chev {
+    transform: translateY(-1px) rotate(180deg);
+  }
+  .stats-toggle-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  .stats-collapsible {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.45s ease-out, opacity 0.3s ease-out;
+  }
+  .stats-collapsible.is-open {
+    max-height: 2400px;
+    opacity: 1;
+    margin-top: 14px;
+  }
   .radar-section {
     padding: var(--section-py) 0;
     background: var(--bg-2);
@@ -1289,6 +1358,77 @@
     to { opacity: 1; transform: scale(1); }
   }
 
+  /* ============ FLOATING VERDICTS BUTTON ============ */
+  .floating-verdicts {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--ink);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 85;
+    transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+  .floating-verdicts:hover {
+    background: var(--panel-2);
+    border-color: var(--ink-dim);
+    transform: translateY(-2px);
+  }
+  .floating-verdicts:focus-visible {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 2px var(--gold);
+  }
+  .floating-verdicts.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(18px);
+  }
+  .fv-icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+  .fv-live {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #ef4444;
+    box-shadow: 0 0 0 2px var(--panel);
+    animation: fv-pulse 2.2s ease-in-out infinite;
+  }
+  .fv-live[hidden] { display: none; }
+  @keyframes fv-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(0.82); }
+  }
+  @media (max-width: 639px) {
+    .floating-verdicts {
+      bottom: 16px;
+      right: 16px;
+      width: 48px;
+      height: 48px;
+    }
+    .fv-icon { font-size: 20px; }
+    .fv-live { top: 5px; right: 5px; width: 10px; height: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fv-live { animation: none; }
+    .floating-verdicts { transition: opacity 0.2s; }
+  }
+
+  .roster-section, .plans-section { padding-bottom: calc(var(--section-py) + 90px); }
+
   /* Stagger reveal */
   .reveal {
     opacity: 0;
@@ -1310,10 +1450,8 @@
   <div class="topnav-inner">
     <div class="brand">FIGHT<span class="dot">·</span>CARD</div>
     <div class="topnav-links">
-      <a href="#stats">Stats</a>
-      <a href="#radar">Radar</a>
-      <a href="#style">Style</a>
-      <a href="#plans">Plans</a>
+      <a href="#roster">Roster</a>
+      <a href="#game-plan">Game Plan</a>
       <a href="#verdicts">Verdicts</a>
     </div>
   </div>
@@ -1338,128 +1476,10 @@
   </div>
 </section>
 
-<!-- ============ STAT SHEET ============ -->
-<section class="stat-matrix-section" id="stats">
+<!-- ============ SPARRING ROSTER (identity + radar + collapsible stats) ============ -->
+<section class="roster-section" id="roster">
   <div class="container">
-    <div class="section-label reveal d1">01 · Stat Sheet</div>
-    <h2 class="section-title reveal d2">Head to <span class="thin">Head</span></h2>
-
-    <table class="stat-matrix reveal d2">
-      <thead>
-        <tr>
-          <th class="stat-spacer" scope="col">Criteria</th>
-          <th style="--c: var(--pier);" scope="col">Pier</th>
-          <th style="--c: var(--arno);" scope="col">Arno</th>
-          <th style="--c: var(--me);"   scope="col">Eric</th>
-          <th style="--c: var(--axel);" scope="col"><span class="head-tag">Prospect</span>Axel</th>
-          <th style="--c: var(--guil);" scope="col"><span class="head-tag">Prospect</span>Guil</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="category-row"><td colspan="6">Physical</td></tr>
-        <tr>
-          <th scope="row" class="stat-label">Cardio</th>
-          <td class="stat-cell"     style="--c: var(--pier); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
-          <td class="stat-cell top" style="--c: var(--arno); --w: 80%;"><span class="val">8</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--me);   --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--axel); --w: 70%;"><span class="val">7</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--guil); --w: 70%;"><span class="val">7</span><span class="mini"></span></td>
-        </tr>
-        <tr>
-          <th scope="row" class="stat-label">Strength</th>
-          <td class="stat-cell top" style="--c: var(--pier); --w: 70%;"><span class="val">7</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--arno); --w: 60%;"><span class="val">6</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--me);   --w: 60%;"><span class="val">6</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--axel); --w: 40%;"><span class="val">4</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--guil); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
-        </tr>
-        <tr>
-          <th scope="row" class="stat-label">Speed</th>
-          <td class="stat-cell"     style="--c: var(--pier); --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
-          <td class="stat-cell top" style="--c: var(--arno); --w: 60%;"><span class="val">6</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--me);   --w: 40%;"><span class="val">4</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--axel); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--guil); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-        </tr>
-
-        <tr class="category-row"><td colspan="6">Technique</td></tr>
-        <tr>
-          <th scope="row" class="stat-label">Low Kick</th>
-          <td class="stat-cell top" style="--c: var(--pier); --w: 70%;"><span class="val">7</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--arno); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--me);   --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--axel); --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--guil); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-        </tr>
-        <tr>
-          <th scope="row" class="stat-label">Middle Kick</th>
-          <td class="stat-cell"     style="--c: var(--pier); --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
-          <td class="stat-cell top" style="--c: var(--arno); --w: 70%;"><span class="val">7</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--me);   --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--axel); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--guil); --w: 10%;"><span class="val">1</span><span class="mini"></span></td>
-        </tr>
-        <tr>
-          <th scope="row" class="stat-label">High Kick</th>
-          <td class="stat-cell top" style="--c: var(--pier); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--arno); --w: 40%;"><span class="val">4</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--me);   --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--axel); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--guil); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-        </tr>
-        <tr>
-          <th scope="row" class="stat-label" aria-label="English Boxing">Boxing</th>
-          <td class="stat-cell"     style="--c: var(--pier); --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--arno); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
-          <td class="stat-cell top" style="--c: var(--me);   --w: 70%;"><span class="val">7</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--axel); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--guil); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-        </tr>
-
-        <tr class="category-row"><td colspan="6">Fight IQ</td></tr>
-        <tr>
-          <th scope="row" class="stat-label" aria-label="Feints and Setup">Feints</th>
-          <td class="stat-cell"     style="--c: var(--pier); --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
-          <td class="stat-cell top" style="--c: var(--arno); --w: 60%;"><span class="val">6</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--me);   --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--axel); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--guil); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-        </tr>
-        <tr>
-          <th scope="row" class="stat-label" aria-label="Pressure and Aggression">Pressure</th>
-          <td class="stat-cell"     style="--c: var(--pier); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--arno); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
-          <td class="stat-cell top" style="--c: var(--me);   --w: 60%;"><span class="val">6</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--axel); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
-          <td class="stat-cell"     style="--c: var(--guil); --w: 10%;"><span class="val">1</span><span class="mini"></span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ============ RADAR ============ -->
-<section class="radar-section" id="radar">
-  <div class="container">
-    <div class="section-label reveal d1">02 · Profile Overlay</div>
-    <h2 class="section-title reveal d2">Shape of <span class="thin">the Fighter</span></h2>
-    <div class="radar-selector reveal d3" role="group" aria-label="Pick up to two fighters to compare">
-      <button type="button" class="legend-pill" data-fighter="pier" aria-pressed="true"  style="--c: var(--pier);"><span class="name">Pier</span><span class="score">4.56</span></button>
-      <button type="button" class="legend-pill" data-fighter="arno" aria-pressed="true"  style="--c: var(--arno);"><span class="name">Arno</span><span class="score">5.78</span></button>
-      <button type="button" class="legend-pill" data-fighter="me"   aria-pressed="false" style="--c: var(--me);"><span class="name">Eric</span><span class="score">4.22</span></button>
-      <button type="button" class="legend-pill" data-fighter="axel" aria-pressed="false" style="--c: var(--axel);"><span class="name">Axel</span><span class="score">2.89</span></button>
-      <button type="button" class="legend-pill" data-fighter="guil" aria-pressed="false" style="--c: var(--guil);"><span class="name">Guil</span><span class="score">2.67</span></button>
-    </div>
-    <div class="radar-canvas-wrap reveal d4">
-      <canvas id="radarChart"></canvas>
-    </div>
-  </div>
-</section>
-
-<!-- ============ IDENTITY ============ -->
-<section class="identity-section" id="style">
-  <div class="container">
-    <div class="section-label reveal d1">03 · Fighter Identity</div>
+    <div class="section-label reveal d1">01 · Sparring Roster</div>
     <h2 class="section-title reveal d2">Weapon &amp; <span class="thin">Style</span></h2>
 
     <div class="identity-nav reveal d3" role="tablist" aria-label="Browse fighter profiles">
@@ -1586,13 +1606,128 @@
         </div>
       </article>
     </div>
+
+    <hr class="subsection-divider" aria-hidden="true">
+
+    <h3 class="subsection-title">Fighter Stats</h3>
+
+    <div class="radar-selector" role="group" aria-label="Pick up to two fighters to compare">
+      <button type="button" class="legend-pill" data-fighter="pier" aria-pressed="true"  style="--c: var(--pier);"><span class="name">Pier</span><span class="score">4.56</span></button>
+      <button type="button" class="legend-pill" data-fighter="arno" aria-pressed="true"  style="--c: var(--arno);"><span class="name">Arno</span><span class="score">5.78</span></button>
+      <button type="button" class="legend-pill" data-fighter="me"   aria-pressed="false" style="--c: var(--me);"><span class="name">Eric</span><span class="score">4.22</span></button>
+      <button type="button" class="legend-pill" data-fighter="axel" aria-pressed="false" style="--c: var(--axel);"><span class="name">Axel</span><span class="score">2.89</span></button>
+      <button type="button" class="legend-pill" data-fighter="guil" aria-pressed="false" style="--c: var(--guil);"><span class="name">Guil</span><span class="score">2.67</span></button>
+    </div>
+    <div class="radar-canvas-wrap">
+      <canvas id="radarChart"></canvas>
+    </div>
+
+    <div class="stats-toggle-wrap">
+      <button type="button" class="stats-toggle" aria-expanded="false" aria-controls="stats-content">
+        <span class="toggle-label">See fighters stats</span>
+        <span class="toggle-chev" aria-hidden="true">▾</span>
+      </button>
+    </div>
+    <div class="stats-collapsible" id="stats-content">
+      <table class="stat-matrix">
+        <thead>
+          <tr>
+            <th class="stat-spacer" scope="col">Criteria</th>
+            <th style="--c: var(--pier);" scope="col">Pier</th>
+            <th style="--c: var(--arno);" scope="col">Arno</th>
+            <th style="--c: var(--me);"   scope="col">Eric</th>
+            <th style="--c: var(--axel);" scope="col"><span class="head-tag">Prospect</span>Axel</th>
+            <th style="--c: var(--guil);" scope="col"><span class="head-tag">Prospect</span>Guil</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="category-row"><td colspan="6">Physical</td></tr>
+          <tr>
+            <th scope="row" class="stat-label">Cardio</th>
+            <td class="stat-cell"     style="--c: var(--pier); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
+            <td class="stat-cell top" style="--c: var(--arno); --w: 80%;"><span class="val">8</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--me);   --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--axel); --w: 70%;"><span class="val">7</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--guil); --w: 70%;"><span class="val">7</span><span class="mini"></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="stat-label">Strength</th>
+            <td class="stat-cell top" style="--c: var(--pier); --w: 70%;"><span class="val">7</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--arno); --w: 60%;"><span class="val">6</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--me);   --w: 60%;"><span class="val">6</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--axel); --w: 40%;"><span class="val">4</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--guil); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="stat-label">Speed</th>
+            <td class="stat-cell"     style="--c: var(--pier); --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
+            <td class="stat-cell top" style="--c: var(--arno); --w: 60%;"><span class="val">6</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--me);   --w: 40%;"><span class="val">4</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--axel); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--guil); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+          </tr>
+
+          <tr class="category-row"><td colspan="6">Technique</td></tr>
+          <tr>
+            <th scope="row" class="stat-label">Low Kick</th>
+            <td class="stat-cell top" style="--c: var(--pier); --w: 70%;"><span class="val">7</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--arno); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--me);   --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--axel); --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--guil); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="stat-label">Middle Kick</th>
+            <td class="stat-cell"     style="--c: var(--pier); --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
+            <td class="stat-cell top" style="--c: var(--arno); --w: 70%;"><span class="val">7</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--me);   --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--axel); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--guil); --w: 10%;"><span class="val">1</span><span class="mini"></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="stat-label">High Kick</th>
+            <td class="stat-cell top" style="--c: var(--pier); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--arno); --w: 40%;"><span class="val">4</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--me);   --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--axel); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--guil); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="stat-label" aria-label="English Boxing">Boxing</th>
+            <td class="stat-cell"     style="--c: var(--pier); --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--arno); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
+            <td class="stat-cell top" style="--c: var(--me);   --w: 70%;"><span class="val">7</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--axel); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--guil); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+          </tr>
+
+          <tr class="category-row"><td colspan="6">Fight IQ</td></tr>
+          <tr>
+            <th scope="row" class="stat-label" aria-label="Feints and Setup">Feints</th>
+            <td class="stat-cell"     style="--c: var(--pier); --w: 30%;"><span class="val">3</span><span class="mini"></span></td>
+            <td class="stat-cell top" style="--c: var(--arno); --w: 60%;"><span class="val">6</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--me);   --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--axel); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--guil); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="stat-label" aria-label="Pressure and Aggression">Pressure</th>
+            <td class="stat-cell"     style="--c: var(--pier); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--arno); --w: 50%;"><span class="val">5</span><span class="mini"></span></td>
+            <td class="stat-cell top" style="--c: var(--me);   --w: 60%;"><span class="val">6</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--axel); --w: 20%;"><span class="val">2</span><span class="mini"></span></td>
+            <td class="stat-cell"     style="--c: var(--guil); --w: 10%;"><span class="val">1</span><span class="mini"></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 
-<!-- ============ GAME PLANS ============ -->
-<section class="plans-section" id="plans">
+<!-- ============ GAME PLAN ============ -->
+<section class="plans-section" id="game-plan">
   <div class="container">
-    <div class="section-label reveal d1">04 · Sparring Game Plans</div>
+    <div class="section-label reveal d1">02 · Sparring Game Plan</div>
     <h2 class="section-title reveal d2">The <span class="thin">Playbook</span></h2>
     <p class="plans-intro reveal d2">Pick a corner to unlock the four matchups.</p>
 
@@ -1933,7 +2068,7 @@
 <!-- ============ VERDICTS ============ -->
 <section class="verdicts-section" id="verdicts">
   <div class="container">
-    <div class="section-label reveal d1">05 · Gym Court</div>
+    <div class="section-label reveal d1">03 · Sparring Verdicts</div>
     <h2 class="section-title reveal d2">Sparring <span class="thin">Verdicts</span></h2>
     <p class="verdicts-intro reveal d2">Two fighters spar. Three judges call it.</p>
 
@@ -1985,6 +2120,11 @@
 <footer>
   <div class="container">Compiled for Saturday · Bangkok Session · Stay sharp</div>
 </footer>
+
+<a href="#verdicts" class="floating-verdicts" id="floating-verdicts" aria-label="Go to Sparring Verdicts">
+  <span class="fv-icon" aria-hidden="true">⚖️</span>
+  <span class="fv-live" hidden></span>
+</a>
 
 <script>
 (function() {
@@ -2499,10 +2639,22 @@
     if (!pending.length) {
       pendingList.innerHTML = '';
       pendingEmpty.hidden = false;
-      return;
+    } else {
+      pendingEmpty.hidden = true;
+      pendingList.innerHTML = pending.map(renderPendingCard).join('');
     }
-    pendingEmpty.hidden = true;
-    pendingList.innerHTML = pending.map(renderPendingCard).join('');
+    updateLiveFloat();
+  }
+
+  function updateLiveFloat() {
+    const fv = document.getElementById('floating-verdicts');
+    if (!fv) return;
+    const live = fv.querySelector('.fv-live');
+    const hasPending = pending.length > 0;
+    if (live) live.hidden = !hasPending;
+    fv.setAttribute('aria-label', hasPending
+      ? 'Go to Sparring Verdicts, live match in progress'
+      : 'Go to Sparring Verdicts');
   }
 
   // --- Render history ---
@@ -2690,6 +2842,38 @@
   renderIdentity();
   fetchAll();
   subscribeRealtime();
+})();
+</script>
+
+<script>
+// Stats collapsible toggle + floating Verdicts button visibility
+(function() {
+  const toggle = document.querySelector('.stats-toggle');
+  const panel = document.getElementById('stats-content');
+  const label = toggle ? toggle.querySelector('.toggle-label') : null;
+  if (toggle && panel && label) {
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      const next = !isOpen;
+      toggle.setAttribute('aria-expanded', String(next));
+      panel.classList.toggle('is-open', next);
+      label.textContent = next ? 'Hide fighters stats' : 'See fighters stats';
+    });
+  }
+
+  const fv = document.getElementById('floating-verdicts');
+  const verdicts = document.getElementById('verdicts');
+  if (fv && verdicts && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        fv.classList.toggle('is-hidden', entry.isIntersecting);
+      });
+    }, {
+      threshold: 0.08,
+      rootMargin: '-80px 0px -15% 0px'
+    });
+    io.observe(verdicts);
+  }
 })();
 </script>
 
