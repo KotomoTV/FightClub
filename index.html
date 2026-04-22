@@ -1407,6 +1407,303 @@
     to { opacity: 1; transform: scale(1); }
   }
 
+  /* ============ FIGHTER CARDS ============ */
+  .cards-section {
+    padding: calc(var(--section-py) * 0.5) 0 calc(var(--section-py) * 0.4);
+  }
+  .cards-intro {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-top: -16px;
+    margin-bottom: 28px;
+  }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  @media (min-width: 640px) {
+    .cards-grid { grid-template-columns: repeat(2, 1fr); max-width: 680px; gap: 20px; }
+  }
+  @media (min-width: 900px) {
+    .cards-grid { grid-template-columns: repeat(3, 1fr); max-width: 1060px; gap: 24px; }
+  }
+
+  .fcard {
+    --tier-c1: #c47e3e;
+    --tier-c2: #6b4423;
+    --tier-glow: rgba(196, 126, 62, 0.2);
+    aspect-ratio: 2.5 / 3.5;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 18px 18px;
+    border-radius: 12px;
+    background: linear-gradient(165deg, var(--bg-2) 0%, var(--bg) 100%);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    cursor: pointer;
+    overflow: hidden;
+    font-variant-numeric: tabular-nums;
+    transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.2, 1),
+                box-shadow 0.35s ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  .fcard::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 12px;
+    background: linear-gradient(145deg, var(--tier-c1) 0%, var(--tier-c2) 60%, var(--tier-c1) 100%);
+    z-index: -1;
+  }
+  .fcard::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    background: radial-gradient(ellipse at top, var(--tier-glow), transparent 60%);
+    pointer-events: none;
+  }
+  .fcard.tier-rookie    { --tier-c1: #c47e3e; --tier-c2: #6b4423; --tier-glow: rgba(196, 126, 62, 0.22); }
+  .fcard.tier-contender { --tier-c1: #d9d9d9; --tier-c2: #7e7e7e; --tier-glow: rgba(217, 217, 217, 0.2); }
+  .fcard.tier-champion  { --tier-c1: #f5d76e; --tier-c2: #b8860b; --tier-glow: rgba(245, 215, 110, 0.28); }
+  .fcard.tier-legend    { --tier-c1: #f5d76e; --tier-c2: #b8860b; --tier-glow: rgba(245, 215, 110, 0.3); }
+  .fcard.tier-legend::before {
+    background: conic-gradient(from 0deg,
+      #f5d76e 0%, #ff6b9d 20%, #a78bfa 40%,
+      #60a5fa 60%, #34d399 80%, #fbbf24 100%);
+    animation: fcard-holo 8s linear infinite;
+  }
+  @keyframes fcard-holo {
+    to { transform: rotate(360deg); }
+  }
+  @media (hover: hover) {
+    .fcard:hover {
+      transform: rotateY(3deg) translateY(-4px) scale(1.02);
+      box-shadow: 0 24px 56px rgba(0, 0, 0, 0.7),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+  }
+  .fcard:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--gold),
+                0 16px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  .fcard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .fcard-ovr-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .fcard-ovr {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(42px, 10vw, 56px);
+    line-height: 0.85;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  }
+  .fcard-archetype {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--tier-c1);
+    opacity: 0.95;
+  }
+  .fcard-nation {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    padding: 4px 8px;
+    border: 1px solid var(--tier-c2);
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .fcard-avatar {
+    align-self: center;
+    margin: 14px 0 10px;
+    width: clamp(92px, 28%, 120px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--c) 55%, transparent), color-mix(in srgb, var(--c) 15%, transparent));
+    border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(44px, 12vw, 56px);
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  .fcard-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .fcard-names {
+    text-align: center;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid color-mix(in srgb, var(--tier-c2) 40%, transparent);
+  }
+  .fcard-nickname {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(18px, 4vw, 22px);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .fcard-real {
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  .fcard-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 16px;
+    margin-bottom: 14px;
+  }
+  .fcard-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'JetBrains Mono', monospace;
+    border-bottom: 1px dashed color-mix(in srgb, var(--tier-c2) 25%, transparent);
+    padding-bottom: 4px;
+  }
+  .fcard-stat-val {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .fcard-stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--ink-mute);
+  }
+
+  .fcard-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .fcard-signature {
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    font-style: italic;
+    color: var(--ink-dim);
+    line-height: 1.3;
+  }
+  .fcard-weakness {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    line-height: 1.3;
+    opacity: 0.8;
+  }
+  .fcard-weakness .w-label {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+
+  .fcard-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    background: rgba(10, 10, 10, 0.92);
+    backdrop-filter: saturate(140%) blur(12px);
+    -webkit-backdrop-filter: saturate(140%) blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: fcard-modal-in 0.28s ease-out;
+  }
+  .fcard-modal[hidden] { display: none; }
+  @keyframes fcard-modal-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .fcard-modal-inner {
+    width: min(420px, 100%);
+    max-height: 90vh;
+    position: relative;
+    animation: fcard-modal-rise 0.4s cubic-bezier(0.2, 0.9, 0.2, 1);
+  }
+  @keyframes fcard-modal-rise {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: none; }
+  }
+  .fcard-modal-inner .fcard { cursor: default; }
+  .fcard-modal-inner .fcard:hover { transform: none; }
+  .fcard-close {
+    position: absolute;
+    top: -48px;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    font-size: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .fcard-close:hover {
+    color: var(--ink);
+    border-color: var(--ink-dim);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fcard { transition: none; }
+    .fcard:hover { transform: none; }
+    .fcard.tier-legend::before { animation: none; }
+    .fcard-modal { animation: none; }
+    .fcard-modal-inner { animation: none; }
+  }
+
   /* ============ FLOATING VERDICTS BUTTON ============ */
   .floating-verdicts {
     position: fixed;
@@ -1501,6 +1798,7 @@
     <a class="brand" href="#top" aria-label="Sparring Card, go to top">SPARRING<span class="dot">·</span>CARD</a>
     <div class="topnav-links">
       <a href="#roster">Roster</a>
+      <a href="#cards">Cards</a>
       <a href="#game-plan">Game Plan</a>
       <a href="#verdicts">Verdicts</a>
     </div>
@@ -2135,6 +2433,16 @@
   </div>
 </section>
 
+<!-- ============ FIGHTER CARDS ============ -->
+<section class="cards-section plans-section" id="cards">
+  <div class="container">
+    <div class="section-label reveal d1">Patch 2.5.0 · Preview</div>
+    <h2 class="section-title reveal d2">Fighter <span class="thin">Cards</span></h2>
+    <p class="cards-intro reveal d2">Collectible ratings pulled from the roster stats.</p>
+    <div class="cards-grid reveal d3"></div>
+  </div>
+</section>
+
 <!-- ============ VERDICTS ============ -->
 <section class="verdicts-section" id="verdicts">
   <div class="container">
@@ -2195,6 +2503,13 @@
   <span class="fv-icon" aria-hidden="true">🔔</span>
   <span class="fv-live" hidden></span>
 </a>
+
+<div class="fcard-modal" id="fcard-modal" hidden role="dialog" aria-modal="true" aria-label="Fighter card detail">
+  <div class="fcard-modal-inner">
+    <button type="button" class="fcard-close" aria-label="Close card">×</button>
+    <div class="fcard-modal-slot"></div>
+  </div>
+</div>
 
 <script>
 (function() {
@@ -2984,6 +3299,181 @@
       rootMargin: '-80px 0px -15% 0px'
     });
     io.observe(verdicts);
+  }
+})();
+</script>
+
+<script>
+// Fighter Cards (Patch 2.5.0 preview)
+(function() {
+  const ROSTER = [
+    { id: 'Pier', color: 'var(--pier)',
+      radar: { car: 5, str: 7, spd: 3, lk: 7, mk: 3, hk: 5, box: 3, ft: 3, pr: 5 },
+      nickname: 'The Hammer', signature: 'Low kick chain', weakness: 'Cardio after round one', nationality: 'TH', photo: null },
+    { id: 'Arno', color: 'var(--arno)',
+      radar: { car: 8, str: 6, spd: 6, lk: 5, mk: 7, hk: 4, box: 5, ft: 6, pr: 5 },
+      nickname: 'The Surgeon', signature: 'Pivot mid kick', weakness: 'High kick still landing', nationality: 'TH', photo: null },
+    { id: 'Eric', color: 'var(--me)',
+      radar: { car: 3, str: 6, spd: 4, lk: 5, mk: 3, hk: 2, box: 7, ft: 2, pr: 6 },
+      nickname: 'Old School', signature: 'Pocket boxing', weakness: 'Gas tank below round two', nationality: 'TH', photo: null },
+    { id: 'Axel', color: 'var(--axel)',
+      radar: { car: 7, str: 4, spd: 2, lk: 3, mk: 2, hk: 2, box: 2, ft: 2, pr: 2 },
+      nickname: 'The Engine', signature: 'Relentless pace', weakness: 'Raw technique floor', nationality: 'TH', photo: null },
+    { id: 'Guil', color: 'var(--guil)',
+      radar: { car: 7, str: 5, spd: 2, lk: 2, mk: 1, hk: 2, box: 2, ft: 2, pr: 1 },
+      nickname: 'Stone', signature: 'Refusal to fall', weakness: 'No offensive tools yet', nationality: 'TH', photo: null }
+  ];
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function toCardStats(r) {
+    const rnd = v => Math.round(v * 9.9);
+    return {
+      str: rnd(r.str),
+      spd: rnd(r.spd),
+      car: rnd(r.car),
+      box: rnd(r.box),
+      kck: rnd((r.lk + r.mk + r.hk) / 3),
+      pre: rnd((r.ft + r.pr) / 2)
+    };
+  }
+
+  function computeOVR(s) {
+    return Math.round(
+      s.str * 0.12 + s.spd * 0.14 + s.car * 0.18 +
+      s.box * 0.14 + s.kck * 0.22 + s.pre * 0.20
+    );
+  }
+
+  function computeTier(ovr) {
+    if (ovr >= 85) return 'legend';
+    if (ovr >= 75) return 'champion';
+    if (ovr >= 65) return 'contender';
+    return 'rookie';
+  }
+
+  function computeArchetype(s) {
+    const values = [s.str, s.spd, s.car, s.box, s.kck, s.pre];
+    const avg = values.reduce((a, b) => a + b, 0) / 6;
+    const max = Math.max.apply(null, values);
+    if (max - avg < 7) return 'All Rounder';
+    if (s.pre >= 75 && s.car >= 75) return 'Pressure Fighter';
+    if (s.kck >= 75 && s.kck === max) return 'Kicker';
+    if (s.box >= 75 && s.str >= 70) return 'Boxer Puncher';
+    if (s.pre >= 75 && s.spd >= 70) return 'Counter Puncher';
+    if (s.box >= 75 && s.pre >= 70) return 'Technician';
+    return 'All Rounder';
+  }
+
+  function renderCardHTML(f) {
+    const s = toCardStats(f.radar);
+    const ovr = computeOVR(s);
+    const tier = computeTier(ovr);
+    const archetype = computeArchetype(s);
+    const initial = f.id[0];
+    const avatar = f.photo
+      ? '<img src="' + esc(f.photo) + '" alt="' + esc(f.nickname || f.id) + '">'
+      : esc(initial);
+
+    return (
+      '<button type="button" class="fcard tier-' + tier + '" data-fighter-card="' + esc(f.id) + '" style="--c: ' + f.color + ';" aria-label="' + esc(f.id) + ' fighter card, OVR ' + ovr + ', ' + esc(archetype) + '">' +
+        '<header class="fcard-header">' +
+          '<div class="fcard-ovr-wrap">' +
+            '<div class="fcard-ovr">' + ovr + '</div>' +
+            '<div class="fcard-archetype">' + esc(archetype) + '</div>' +
+          '</div>' +
+          '<div class="fcard-nation">' + esc(f.nationality || 'TH') + '</div>' +
+        '</header>' +
+        '<div class="fcard-avatar" aria-hidden="true">' + avatar + '</div>' +
+        '<div class="fcard-names">' +
+          '<div class="fcard-nickname">' + esc(f.nickname || f.id) + '</div>' +
+          '<div class="fcard-real">' + esc(f.id) + '</div>' +
+        '</div>' +
+        '<div class="fcard-stats">' +
+          '<div class="fcard-stat"><span class="fcard-stat-val">' + s.str + '</span><span class="fcard-stat-label">STR</span></div>' +
+          '<div class="fcard-stat"><span class="fcard-stat-val">' + s.spd + '</span><span class="fcard-stat-label">SPD</span></div>' +
+          '<div class="fcard-stat"><span class="fcard-stat-val">' + s.car + '</span><span class="fcard-stat-label">CAR</span></div>' +
+          '<div class="fcard-stat"><span class="fcard-stat-val">' + s.box + '</span><span class="fcard-stat-label">BOX</span></div>' +
+          '<div class="fcard-stat"><span class="fcard-stat-val">' + s.kck + '</span><span class="fcard-stat-label">KCK</span></div>' +
+          '<div class="fcard-stat"><span class="fcard-stat-val">' + s.pre + '</span><span class="fcard-stat-label">PRE</span></div>' +
+        '</div>' +
+        '<footer class="fcard-footer">' +
+          (f.signature ? '<div class="fcard-signature">"' + esc(f.signature) + '"</div>' : '') +
+          (f.weakness  ? '<div class="fcard-weakness"><span class="w-label">Weakness:</span>' + esc(f.weakness) + '</div>' : '') +
+        '</footer>' +
+      '</button>'
+    );
+  }
+
+  function renderGrid() {
+    const grid = document.querySelector('.cards-grid');
+    if (!grid) return;
+    grid.innerHTML = ROSTER.map(renderCardHTML).join('');
+  }
+
+  // Modal
+  const modal = document.getElementById('fcard-modal');
+  const slot = modal ? modal.querySelector('.fcard-modal-slot') : null;
+  const closeBtn = modal ? modal.querySelector('.fcard-close') : null;
+
+  function openModal(fighterId) {
+    if (!modal || !slot) return;
+    const f = ROSTER.find(x => x.id === fighterId);
+    if (!f) return;
+    slot.innerHTML = renderCardHTML(f);
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    if (!modal) return;
+    modal.hidden = true;
+    if (slot) slot.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('click', (e) => {
+    const card = e.target.closest('[data-fighter-card]');
+    if (card && !e.target.closest('.fcard-modal')) {
+      openModal(card.dataset.fighterCard);
+    }
+  });
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (modal) modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && !modal.hidden) closeModal();
+  });
+
+  renderGrid();
+
+  // Best-effort Supabase hydration: override nickname/signature/weakness/photo if the table has rows.
+  if (window.supabase && window.supabase.createClient) {
+    try {
+      const sb = window.supabase.createClient(
+        'https://jxsrcmkyzevahxzkzxrg.supabase.co',
+        'sb_publishable_NZCCrNdhpdnMdsTjE9QbZA_T-Ov1Uz4'
+      );
+      sb.from('fighter_cards').select('*').then(({ data, error }) => {
+        if (error) { console.warn('[cards] fetch', error.message); return; }
+        if (!data || !data.length) return;
+        let changed = false;
+        data.forEach(row => {
+          const f = ROSTER.find(x => x.id === row.fighter_id);
+          if (!f) return;
+          if (row.nickname)       { f.nickname = row.nickname; changed = true; }
+          if (row.signature_move) { f.signature = row.signature_move; changed = true; }
+          if (row.weakness)       { f.weakness = row.weakness; changed = true; }
+          if (row.photo_url)      { f.photo = row.photo_url; changed = true; }
+          if (row.nationality)    { f.nationality = row.nationality; changed = true; }
+        });
+        if (changed) renderGrid();
+      });
+    } catch (e) { console.warn('[cards] supabase init failed', e); }
   }
 })();
 </script>
