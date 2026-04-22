@@ -1075,6 +1075,7 @@
     margin: 0 auto;
   }
   .verdict-history-card {
+    position: relative;
     background: var(--panel);
     border: 1px solid var(--line);
     padding: 18px 20px;
@@ -1083,24 +1084,36 @@
     gap: 14px;
   }
   .hist-fight {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: center;
     gap: 14px;
   }
   .hist-name {
     font-family: 'Anton', sans-serif;
-    font-size: clamp(20px, 5vw, 26px);
+    font-size: clamp(20px, 5vw, 24px);
     letter-spacing: 0.03em;
     text-transform: uppercase;
-    color: var(--ink);
+    color: var(--ink-dim);
     font-weight: 400;
     line-height: 1;
+  }
+  .hist-name-a { justify-self: end; }
+  .hist-name-b { justify-self: start; }
+  .hist-name.hist-winner {
+    color: var(--ink);
+    text-decoration: underline solid #16a34a;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+  }
+  .hist-name.hist-neutral {
+    color: var(--ink);
   }
   .hist-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    justify-self: center;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     font-weight: 700;
@@ -1113,32 +1126,29 @@
     color: #ffffff;
   }
   .hist-badge-win { background: #16a34a; }
-  .hist-badge-loss { background: #dc2626; }
   .hist-badge-draw { background: #f0c25a; color: #0a0a0a; }
-  .hist-vs {
+  .hist-time {
+    position: absolute;
+    top: 18px;
+    right: 20px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     font-weight: 500;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--ink-mute);
-  }
-  .hist-footer {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 14px;
-    padding-top: 12px;
-    border-top: 1px dashed var(--line);
-    flex-wrap: wrap;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    white-space: nowrap;
   }
   .hist-votes {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 4px 10px;
     align-items: baseline;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
   }
   .hist-vote {
     display: inline-flex;
@@ -1160,36 +1170,21 @@
     color: var(--ink-mute);
     opacity: 0.5;
   }
-  .hist-time {
-    color: var(--ink-mute);
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
   @media (max-width: 639px) {
     .hist-fight {
-      display: grid;
       grid-template-columns: 1fr auto 1fr;
-      grid-template-areas:
-        "badge-a vs badge-b"
-        "name-a  .  name-b";
-      gap: 8px 10px;
-      align-items: center;
-      justify-items: center;
+      gap: 10px;
     }
-    .hist-name-a { grid-area: name-a; }
-    .hist-name-b { grid-area: name-b; }
-    .hist-badge-a { grid-area: badge-a; }
-    .hist-badge-b { grid-area: badge-b; }
-    .hist-vs { grid-area: vs; }
-    .hist-footer {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
+    .hist-name { font-size: 18px; }
+    .hist-badge { min-width: 96px; padding: 7px 12px; font-size: 10px; }
+    .hist-time {
+      position: static;
+      align-self: flex-start;
+      margin: 0;
     }
     .hist-votes {
       flex-direction: column;
+      align-items: flex-start;
       gap: 4px;
     }
     .hist-sep { display: none; }
@@ -2505,30 +2500,26 @@
     const winnerSide = isDraw ? null : s.verdict; // 'fighter_a' or 'fighter_b'
     const drawCount = votes.filter(v => v.choice === 'draw').length;
 
-    // Decide badge label for winning side
-    let winLabel;
+    // Central badge: label + class
+    let badgeLabel, badgeCls;
     if (isDraw) {
-      winLabel = 'Draw';
+      badgeLabel = 'Draw';
+      badgeCls = 'hist-badge-draw';
     } else {
       const winnerCount = votes.filter(v => v.choice === s.verdict).length;
-      if (winnerCount === 3) winLabel = 'Unanimous';
-      else if (drawCount >= 1) winLabel = 'Majority';
-      else winLabel = 'Split';
+      if (winnerCount === 3) badgeLabel = 'Unanimous';
+      else if (drawCount >= 1) badgeLabel = 'Majority';
+      else badgeLabel = 'Split';
+      badgeCls = 'hist-badge-win';
     }
 
-    // Badges per side
-    const badgeFor = (side) => {
-      if (isDraw) {
-        return { label: 'Draw', cls: 'hist-badge-draw' };
-      }
-      if (winnerSide === side) {
-        return { label: winLabel, cls: 'hist-badge-win' };
-      }
-      return { label: 'Defeated', cls: 'hist-badge-loss' };
+    // Name classes: winner underlined, loser dim, draw both neutral
+    const nameClass = (side) => {
+      const base = 'hist-name hist-name-' + (side === 'fighter_a' ? 'a' : 'b');
+      if (isDraw) return base + ' hist-neutral';
+      if (winnerSide === side) return base + ' hist-winner';
+      return base;
     };
-
-    const badgeA = badgeFor('fighter_a');
-    const badgeB = badgeFor('fighter_b');
 
     const voteItems = votes.map(v =>
       '<span class="hist-vote">' +
@@ -2542,16 +2533,12 @@
     return (
       '<article class="verdict-history-card">' +
         '<div class="hist-fight">' +
-          '<span class="hist-name hist-name-a">' + esc(s.fighter_a) + '</span>' +
-          '<span class="hist-badge hist-badge-a ' + badgeA.cls + '">' + badgeA.label + '</span>' +
-          '<span class="hist-vs">vs</span>' +
-          '<span class="hist-badge hist-badge-b ' + badgeB.cls + '">' + badgeB.label + '</span>' +
-          '<span class="hist-name hist-name-b">' + esc(s.fighter_b) + '</span>' +
+          '<span class="' + nameClass('fighter_a') + '">' + esc(s.fighter_a) + '</span>' +
+          '<span class="hist-badge ' + badgeCls + '">' + badgeLabel + '</span>' +
+          '<span class="' + nameClass('fighter_b') + '">' + esc(s.fighter_b) + '</span>' +
         '</div>' +
-        '<div class="hist-footer">' +
-          '<div class="hist-votes">' + voteHtml + '</div>' +
-          '<div class="hist-time">' + formatDate(s.created_at) + '</div>' +
-        '</div>' +
+        '<div class="hist-time">' + formatDate(s.created_at) + '</div>' +
+        '<div class="hist-votes">' + voteHtml + '</div>' +
       '</article>'
     );
   }
