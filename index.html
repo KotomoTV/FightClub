@@ -46,6 +46,17 @@
     --ink-dim: #c2bdb2;
     --ink-mute: #9c958a;
 
+    /* Type scale */
+    --fs-micro: 10px;
+    --fs-meta: 11px;
+    --fs-tag: 12px;
+    --fs-caption: 13px;
+    --fs-value: 14px;
+    --fs-body: 15px;
+    --fs-display-sm: clamp(26px, 7vw, 32px);
+    --fs-display-md: clamp(40px, 11vw, 56px);
+    --fs-display-lg: clamp(32px, 9vw, 64px);
+
     /* Fighter colors, bright for dark bg */
     --pier: #ef4a56;
     --arno: #f0c25a;
@@ -158,7 +169,7 @@
   .topnav-links::-webkit-scrollbar { display: none; }
   .topnav-links a {
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -176,7 +187,7 @@
   /* ============ SHARED ============ */
   .section-label {
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: var(--fs-tag);
     font-weight: 500;
     letter-spacing: 0.34em;
     color: var(--gold);
@@ -185,7 +196,7 @@
   }
   .section-title {
     font-family: 'Anton', sans-serif;
-    font-size: clamp(32px, 9vw, 64px);
+    font-size: var(--fs-display-lg);
     text-transform: uppercase;
     line-height: 0.95;
     letter-spacing: -0.01em;
@@ -220,7 +231,7 @@
     justify-content: center;
     gap: 10px;
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 500;
     letter-spacing: 0.28em;
     color: var(--gold);
@@ -256,7 +267,7 @@
     flex-wrap: wrap;
     margin-top: 24px;
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -290,7 +301,7 @@
   }
   .stat-matrix thead th.stat-spacer {
     font-family: 'Inter', sans-serif;
-    font-size: 9px;
+    font-size: var(--fs-micro);
     letter-spacing: 0.28em;
     color: var(--ink-mute);
     text-align: left;
@@ -302,7 +313,7 @@
   .stat-matrix thead .head-tag {
     display: block;
     font-family: 'Inter', sans-serif;
-    font-size: 7px;
+    font-size: var(--fs-micro);
     letter-spacing: 0.2em;
     font-weight: 700;
     color: var(--c);
@@ -314,7 +325,7 @@
   .stat-matrix tbody tr.category-row td {
     padding: 14px 0 8px;
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--gold);
@@ -331,7 +342,7 @@
   .stat-matrix tbody th.stat-label {
     text-align: left;
     padding: 12px 6px 12px 0;
-    font-size: 12px;
+    font-size: var(--fs-tag);
     font-weight: 500;
     color: var(--ink);
     line-height: 1.2;
@@ -388,7 +399,7 @@
   }
   .subsection-title {
     font-family: 'Anton', sans-serif;
-    font-size: clamp(26px, 6vw, 40px);
+    font-size: var(--fs-display-sm);
     text-transform: uppercase;
     line-height: 0.95;
     letter-spacing: -0.01em;
@@ -406,7 +417,7 @@
     background: transparent;
     border: 0;
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -423,7 +434,7 @@
   }
   .stats-toggle .toggle-chev {
     display: inline-block;
-    font-size: 9px;
+    font-size: var(--fs-micro);
     line-height: 1;
     transform: translateY(-1px);
     transition: transform 0.25s ease-out;
@@ -498,7 +509,7 @@
   }
   .legend-pill .name {
     font-family: 'Anton', sans-serif;
-    font-size: 14px;
+    font-size: var(--fs-value);
     letter-spacing: 0.03em;
     text-transform: uppercase;
     line-height: 1;
@@ -508,7 +519,7 @@
   .legend-pill[aria-selected="true"] .name { color: var(--c); }
   .legend-pill .score {
     font-family: 'Inter', sans-serif;
-    font-size: 9px;
+    font-size: var(--fs-micro);
     font-weight: 700;
     color: var(--c);
     opacity: 0.8;
@@ -573,7 +584,7 @@
   .identity-phase {
     display: inline-block;
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -586,7 +597,7 @@
   }
   .identity-name {
     font-family: 'Anton', sans-serif;
-    font-size: clamp(40px, 11vw, 56px);
+    font-size: var(--fs-display-md);
     line-height: 0.9;
     text-transform: uppercase;
     color: var(--c);
@@ -607,7 +618,7 @@
   }
   .fighter-records .record-label {
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     font-weight: 500;
     letter-spacing: 0.26em;
     text-transform: uppercase;
@@ -615,7 +626,7 @@
   }
   .fighter-records .record-value {
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: var(--fs-tag);
     font-weight: 700;
     letter-spacing: 0.08em;
     color: var(--ink-dim);
@@ -629,7 +640,7 @@
   }
   .identity-type .type-label {
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     font-weight: 500;
     letter-spacing: 0.34em;
     text-transform: uppercase;
@@ -637,7 +648,7 @@
   }
   .identity-type .type-value {
     font-family: 'Manrope', sans-serif;
-    font-size: 14px;
+    font-size: var(--fs-value);
     font-weight: 600;
     letter-spacing: 0.01em;
     color: var(--ink);
@@ -650,7 +661,7 @@
   }
   .identity-weapon .label {
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 500;
     letter-spacing: 0.32em;
     text-transform: uppercase;
@@ -659,7 +670,7 @@
   }
   .identity-weapon .weapon {
     font-family: 'Anton', sans-serif;
-    font-size: clamp(28px, 7.5vw, 34px);
+    font-size: var(--fs-display-sm);
     text-transform: uppercase;
     color: var(--ink);
     font-weight: 400;
@@ -668,7 +679,7 @@
   }
   .identity-style {
     margin-top: 20px;
-    font-size: 15px;
+    font-size: var(--fs-body);
     line-height: 1.6;
     color: var(--ink-dim);
   }
@@ -686,7 +697,7 @@
   .read-label {
     display: block;
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     font-weight: 700;
     letter-spacing: 0.28em;
     text-transform: uppercase;
@@ -694,7 +705,7 @@
     margin-bottom: 4px;
   }
   .read-value {
-    font-size: 13px;
+    font-size: var(--fs-caption);
     line-height: 1.5;
     color: var(--ink);
   }
@@ -708,7 +719,7 @@
   .plans-section { padding: var(--section-py) 0 calc(var(--section-py) * 1.2); }
   .plans-intro {
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -766,7 +777,7 @@
   }
   .plan-arrow {
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 700;
     letter-spacing: 0.3em;
     text-transform: uppercase;
@@ -775,7 +786,7 @@
   }
   .plan-headline {
     font-family: 'Anton', sans-serif;
-    font-size: clamp(26px, 7vw, 32px);
+    font-size: var(--fs-display-sm);
     text-transform: uppercase;
     color: var(--ink);
     line-height: 1.05;
@@ -785,7 +796,7 @@
   }
   .plan-body {
     color: var(--ink-dim);
-    font-size: 15px;
+    font-size: var(--fs-body);
     line-height: 1.65;
     margin-bottom: 20px;
   }
@@ -798,7 +809,7 @@
   }
   .plan-tactics li {
     font-family: 'Inter', sans-serif;
-    font-size: 13px;
+    font-size: var(--fs-caption);
     color: var(--ink);
     padding: 9px 0 9px 22px;
     position: relative;
@@ -811,7 +822,7 @@
     position: absolute;
     left: 0;
     color: var(--opp-c);
-    font-size: 13px;
+    font-size: var(--fs-caption);
     top: 8px;
   }
   .plan-tactics li .highlight { color: var(--opp-c); font-weight: 700; }
@@ -823,7 +834,7 @@
     padding-bottom: calc(32px + env(safe-area-inset-bottom));
     text-align: center;
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 500;
     letter-spacing: 0.29em;
     color: var(--ink-dim);
@@ -842,7 +853,7 @@
 
     .stat-matrix { --bar-max: 64px; }
     .stat-matrix thead th { font-size: 22px; padding: 14px 4px 18px; }
-    .stat-matrix tbody th.stat-label { font-size: 14px; padding: 16px 10px 16px 0; }
+    .stat-matrix tbody th.stat-label { font-size: var(--fs-value); padding: 16px 10px 16px 0; }
     .stat-matrix tbody td.stat-cell { padding: 16px 4px; }
     .stat-matrix .val { font-size: 24px; margin-bottom: 7px; }
     .stat-matrix .stat-cell.top .val { font-size: 30px; }
@@ -856,14 +867,14 @@
       --container-px: 40px;
       --section-py: 80px;
     }
-    .topnav-links a { font-size: 11px; padding: 10px 14px; }
+    .topnav-links a { font-size: var(--fs-meta); padding: 10px 14px; }
     .brand { font-size: 20px; }
 
     .stat-matrix { --bar-max: 96px; }
     .stat-matrix thead th { font-size: 30px; padding: 18px 6px 24px; }
-    .stat-matrix thead .head-tag { font-size: 9px; margin-bottom: 5px; }
-    .stat-matrix thead th.stat-spacer { font-size: 10px; letter-spacing: 0.3em; }
-    .stat-matrix tbody th.stat-label { font-size: 15px; padding: 22px 14px 22px 0; }
+    .stat-matrix thead .head-tag { font-size: var(--fs-micro); margin-bottom: 5px; }
+    .stat-matrix thead th.stat-spacer { font-size: var(--fs-micro); letter-spacing: 0.3em; }
+    .stat-matrix tbody th.stat-label { font-size: var(--fs-body); padding: 22px 14px 22px 0; }
     .stat-matrix tbody td.stat-cell { padding: 22px 8px; }
     .stat-matrix .val { font-size: 32px; margin-bottom: 10px; }
     .stat-matrix .stat-cell.top .val { font-size: 40px; }
@@ -883,7 +894,7 @@
     .radar-selector { margin: 28px auto 20px; gap: 10px; }
     .legend-pill { padding: 14px 10px; min-height: 64px; gap: 5px; }
     .legend-pill .name { font-size: 20px; }
-    .legend-pill .score { font-size: 12px; }
+    .legend-pill .score { font-size: var(--fs-tag); }
 
     .verdicts-pending { grid-template-columns: repeat(3, 1fr); }
     .verdict-card { padding: 24px; }
@@ -898,7 +909,7 @@
   }
   .verdicts-intro {
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -919,7 +930,7 @@
   .verdicts-identity[hidden] { display: none; }
   .verdicts-identity .identity-label {
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     font-weight: 500;
     letter-spacing: 0.3em;
     text-transform: uppercase;
@@ -927,7 +938,7 @@
   }
   .verdicts-identity .identity-name {
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 700;
     letter-spacing: 0.24em;
     text-transform: uppercase;
@@ -939,7 +950,7 @@
     padding: 12px 4px;
     min-height: 44px;
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -980,7 +991,7 @@
   .create-row { display: flex; flex-direction: column; gap: 8px; }
   .create-label {
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     font-weight: 500;
     letter-spacing: 0.3em;
     text-transform: uppercase;
@@ -993,7 +1004,7 @@
   }
   .create-pill {
     font-family: 'Anton', sans-serif;
-    font-size: 13px;
+    font-size: var(--fs-caption);
     letter-spacing: 0.03em;
     text-transform: uppercase;
     color: var(--ink);
@@ -1018,7 +1029,7 @@
     width: 100%;
     margin-top: 4px;
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 700;
     letter-spacing: 0.24em;
     text-transform: uppercase;
@@ -1042,7 +1053,7 @@
   .verdicts-block { margin-bottom: 40px; }
   .verdicts-list-title {
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     font-weight: 700;
     letter-spacing: 0.3em;
     text-transform: uppercase;
@@ -1052,7 +1063,7 @@
   }
   .verdicts-empty, .verdicts-history-empty {
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -1081,7 +1092,7 @@
   }
   .verdict-matchup .fighter {
     font-family: 'Anton', sans-serif;
-    font-size: clamp(28px, 8vw, 36px);
+    font-size: var(--fs-display-sm);
     line-height: 0.95;
     letter-spacing: -0.01em;
     text-transform: uppercase;
@@ -1090,7 +1101,7 @@
   }
   .verdict-matchup .vs {
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 700;
     letter-spacing: 0.3em;
     text-transform: uppercase;
@@ -1115,7 +1126,7 @@
   }
   .progress-label {
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     font-weight: 500;
     letter-spacing: 0.24em;
     text-transform: uppercase;
@@ -1134,7 +1145,7 @@
     align-items: baseline;
     gap: 8px;
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: var(--fs-tag);
     font-weight: 500;
   }
   .vote-row .vote-judge {
@@ -1147,7 +1158,7 @@
   .vote-row .vote-choice { color: var(--ink); }
   .verdict-status {
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     font-weight: 500;
     letter-spacing: 0.28em;
     text-transform: uppercase;
@@ -1156,7 +1167,7 @@
   .identify-options, .vote-options { display: flex; flex-direction: column; gap: 8px; }
   .identify-prompt, .vote-prompt {
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     font-weight: 500;
     letter-spacing: 0.28em;
     text-transform: uppercase;
@@ -1239,7 +1250,7 @@
     justify-content: center;
     justify-self: center;
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -1253,7 +1264,7 @@
   .hist-badge-draw { background: #f0c25a; color: #0a0a0a; }
   .hist-time {
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: var(--fs-micro);
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -1270,7 +1281,7 @@
     padding-top: 12px;
     border-top: 1px dashed var(--line);
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
   }
   .hist-vote {
     display: inline-flex;
@@ -1304,15 +1315,15 @@
       gap: 10px;
     }
     .hist-name { font-size: 18px; }
-    .hist-badge { min-width: 96px; padding: 7px 12px; font-size: 10px; }
+    .hist-badge { min-width: 96px; padding: 7px 12px; font-size: var(--fs-micro); }
     .hist-header { gap: 10px; }
-    .hist-time { font-size: 9px; letter-spacing: 0.2em; }
+    .hist-time { font-size: var(--fs-micro); letter-spacing: 0.2em; }
     .hist-votes {
       flex-wrap: nowrap;
       overflow-x: auto;
       justify-content: flex-start;
       gap: 2px 6px;
-      font-size: 10px;
+      font-size: var(--fs-micro);
       letter-spacing: -0.01em;
       scrollbar-width: none;
     }
@@ -1322,7 +1333,7 @@
 
   .verdict-error {
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--blood);
@@ -1352,7 +1363,7 @@
   }
   .takeover-label {
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 700;
     letter-spacing: 0.4em;
     text-transform: uppercase;
@@ -1373,7 +1384,7 @@
   .takeover-subline {
     margin-top: 24px;
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 500;
     letter-spacing: 0.28em;
     text-transform: uppercase;
@@ -1385,7 +1396,7 @@
     padding: 12px 28px;
     min-height: 44px;
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: var(--fs-meta);
     font-weight: 500;
     letter-spacing: 0.3em;
     text-transform: uppercase;
@@ -1434,7 +1445,7 @@
     right: 14px;
     z-index: 70;
     font-family: 'Inter', sans-serif;
-    font-size: 9px;
+    font-size: var(--fs-micro);
     font-weight: 700;
     letter-spacing: 0.36em;
     text-transform: uppercase;
