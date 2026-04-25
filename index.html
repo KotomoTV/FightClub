@@ -1407,6 +1407,99 @@
     to { opacity: 1; transform: scale(1); }
   }
 
+  /* ============ ADMIN MODE ============ */
+  .admin-toggle-wrap {
+    text-align: center;
+    padding: 6px 0 28px;
+  }
+  .admin-toggle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    padding: 12px 16px;
+    min-height: 44px;
+    opacity: 0.28;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .admin-toggle:hover { opacity: 0.6; }
+  .admin-toggle:focus-visible {
+    outline: none;
+    opacity: 0.8;
+    color: var(--ink-dim);
+  }
+  body.is-admin .admin-toggle {
+    opacity: 0.85;
+    color: #facc15;
+  }
+
+  .admin-badge {
+    position: fixed;
+    top: calc(var(--nav-h) + 10px);
+    right: 14px;
+    z-index: 70;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: #0a0a0a;
+    background: #facc15;
+    padding: 6px 10px;
+    border-radius: 2px;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  }
+  .admin-badge[hidden] { display: none; }
+
+  .admin-delete-btn {
+    display: none;
+  }
+  body.is-admin .admin-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid rgba(250, 204, 21, 0.4);
+    background: rgba(250, 204, 21, 0.1);
+    color: #facc15;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    z-index: 5;
+  }
+  body.is-admin .admin-delete-btn:hover {
+    background: rgba(250, 204, 21, 0.22);
+    border-color: rgba(250, 204, 21, 0.7);
+    color: #fde047;
+  }
+  body.is-admin .admin-delete-btn:focus-visible {
+    outline: none;
+    border-color: #facc15;
+    box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.4);
+  }
+  body.is-admin .admin-delete-btn[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  body.is-admin .verdict-card,
+  body.is-admin .verdict-history-card {
+    position: relative;
+  }
+
   /* ============ FLOATING VERDICTS BUTTON ============ */
   .floating-verdicts {
     position: fixed;
@@ -2191,6 +2284,12 @@
   <div class="container">Compiled for Saturday · Bangkok Session · Stay sharp</div>
 </footer>
 
+<div class="admin-toggle-wrap">
+  <button type="button" class="admin-toggle" id="admin-toggle" aria-label="Toggle admin mode" aria-pressed="false">·</button>
+</div>
+
+<div class="admin-badge" id="admin-badge" hidden aria-hidden="true">Admin mode</div>
+
 <a href="#verdicts" class="floating-verdicts" id="floating-verdicts" aria-label="Go to Sparring Verdicts">
   <span class="fv-icon" aria-hidden="true">🔔</span>
   <span class="fv-live" hidden></span>
@@ -2443,6 +2542,7 @@
   }
 
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  window.__fcSupabase = sb;
 
   // --- State ---
   let pending = [];
@@ -2734,6 +2834,7 @@
 
     return (
       '<article class="verdict-card" data-sparring-id="' + s.id + '">' +
+        '<button type="button" class="admin-delete-btn" data-sparring-id="' + s.id + '" aria-label="Delete sparring" title="Delete sparring">×</button>' +
         '<header class="verdict-matchup">' +
           '<span class="fighter" style="--c: ' + COLOR_VAR[s.fighter_a] + ';">' + esc(s.fighter_a) + '</span>' +
           '<span class="vs">vs</span>' +
@@ -2806,7 +2907,8 @@
     const voteHtml = voteItems.join('<span class="hist-sep">·</span>');
 
     return (
-      '<article class="verdict-history-card">' +
+      '<article class="verdict-history-card" data-sparring-id="' + s.id + '">' +
+        '<button type="button" class="admin-delete-btn" data-sparring-id="' + s.id + '" aria-label="Delete sparring" title="Delete sparring">×</button>' +
         '<div class="hist-header">' +
           '<div class="hist-fight">' +
             '<span class="' + nameClass('fighter_a') + '">' + esc(s.fighter_a) + '</span>' +
@@ -2985,6 +3087,64 @@
     });
     io.observe(verdicts);
   }
+})();
+</script>
+
+<script>
+// Admin mode: discrete toggle + delete buttons on sparring cards
+(function() {
+  const KEY = 'fc_admin';
+  const body = document.body;
+  const toggle = document.getElementById('admin-toggle');
+  const badge = document.getElementById('admin-badge');
+
+  function isOn() {
+    try { return localStorage.getItem(KEY) === '1'; }
+    catch (e) { return false; }
+  }
+  function setOn(on) {
+    try { localStorage.setItem(KEY, on ? '1' : '0'); }
+    catch (e) {}
+    apply();
+  }
+  function apply() {
+    const on = isOn();
+    body.classList.toggle('is-admin', on);
+    if (badge) badge.hidden = !on;
+    if (toggle) toggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+
+  if (toggle) toggle.addEventListener('click', () => setOn(!isOn()));
+  apply();
+
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.admin-delete-btn');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isOn()) return;
+
+    const sparringId = btn.dataset.sparringId;
+    if (!sparringId) return;
+    if (!window.confirm('Delete this sparring permanently?')) return;
+
+    const sb = window.__fcSupabase;
+    if (!sb) {
+      alert('Realtime client not ready, try again in a second.');
+      return;
+    }
+
+    btn.disabled = true;
+    try {
+      const { error } = await sb.from('sparrings').delete().eq('id', sparringId);
+      if (error) throw error;
+      // The realtime DELETE event will remove the card from the DOM via the existing handler
+    } catch (err) {
+      console.error('[admin] delete failed', err);
+      alert('Delete failed: ' + (err.message || 'unknown error'));
+      btn.disabled = false;
+    }
+  });
 })();
 </script>
 
