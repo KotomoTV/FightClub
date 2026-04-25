@@ -3136,8 +3136,14 @@
 
     btn.disabled = true;
     try {
-      const { error } = await sb.from('sparrings').delete().eq('id', sparringId);
+      const { data, error } = await sb.from('sparrings').delete().eq('id', sparringId).select();
       if (error) throw error;
+      if (!data || data.length === 0) {
+        alert('Delete blocked: no rows affected. Likely missing a DELETE policy on the sparrings table in Supabase.');
+        btn.disabled = false;
+        console.warn('[admin] delete returned 0 rows, RLS may be blocking', { sparringId });
+        return;
+      }
       // The realtime DELETE event will remove the card from the DOM via the existing handler
     } catch (err) {
       console.error('[admin] delete failed', err);
